@@ -1,0 +1,31 @@
+TEXTURE = 0
+ColRed
+nValue = 1.000000
+end
+ColBlue
+nValue = 1.000000
+end
+ColGreen
+nValue = 1.000000
+end
+ColAlpha
+nValue = 1.000000
+end
+Radius
+nValue = 5.000000
+end
+Life
+nValue = 50
+end
+Speed
+nValue = 1.900000
+end
+Aangle
+nValue = 4.163503
+InitialRand = 6.283185 0.017453
+end
+gravity
+nValue = 0.001000
+end
+
+FileEnd

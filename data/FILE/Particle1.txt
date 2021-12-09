@@ -1,0 +1,32 @@
+ColRed
+nValue = 0.000000
+end
+ColBlue
+nValue = 0.000000
+end
+ColGreen
+nValue = 0.000000
+end
+ColAlpha
+nValue = 0.000000
+end
+Radius
+nValue = 0.000000
+end
+Life
+nValue = 0
+InitialRand = 300 50
+end
+Speed
+nValue = 0.000000
+InitialRand = 50.000000 0.000000
+end
+Aangle
+nValue = 0.000000
+InitialRand = 6.283185 0.017453
+end
+gravity
+nValue = 0.001000
+end
+
+FileEnd
