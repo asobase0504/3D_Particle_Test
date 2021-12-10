@@ -65,7 +65,13 @@ Effect LoadEffect(EFFECT_TYPE type)
 	{
 		fscanf(pFile, "%s", &read);
 
-		if (strcmp(&read[0], "ColRed") == 0)
+		if (strcmp(&read[0], "TEXTURE") == 0)
+		{
+			fscanf(pFile, "%s", &read);			// = の除去
+			fscanf(pFile, "%d", &effect.tex);	// 値を入れる
+
+		}
+		else if (strcmp(&read[0], "ColRed") == 0)
 		{
 			while (1)
 			{
@@ -275,7 +281,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 				}
 			}
 		}
-		else if (strcmp(&read[0], "Aangle") == 0)
+		else if (strcmp(&read[0], "Aangle_X") == 0)
 		{
 			while (1)
 			{
@@ -283,21 +289,81 @@ Effect LoadEffect(EFFECT_TYPE type)
 				if (strcmp(&read[0], "nValue") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randAangle.fValue);
+					fscanf(pFile, "%f", &effect.shotAngleX.fValue);
 				}
 				else if (strcmp(&read[0], "InitialRand") == 0)
 				{
-					effect.randAangle.initial.bIsRandom = true;
+					effect.shotAngleX.initial.bIsRandom = true;
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randAangle.initial.fMax);
-					fscanf(pFile, "%f", &effect.randAangle.initial.fMin);
+					fscanf(pFile, "%f", &effect.shotAngleX.initial.fMax);
+					fscanf(pFile, "%f", &effect.shotAngleX.initial.fMin);
 				}
 				else if (strcmp(&read[0], "AddRand") == 0)
 				{
-					effect.randAangle.Add.bIsRandom = true;
+					effect.shotAngleX.Add.bIsRandom = true;
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randAangle.Add.fMax);
-					fscanf(pFile, "%f", &effect.randAangle.Add.fMin);
+					fscanf(pFile, "%f", &effect.shotAngleX.Add.fMax);
+					fscanf(pFile, "%f", &effect.shotAngleX.Add.fMin);
+				}
+				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+				{
+					break;
+				}
+			}
+		}
+		else if (strcmp(&read[0], "Aangle_Y") == 0)
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", &read);
+				if (strcmp(&read[0], "nValue") == 0)
+				{
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.shotAngleY.fValue);
+				}
+				else if (strcmp(&read[0], "InitialRand") == 0)
+				{
+					effect.shotAngleZ.initial.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.shotAngleY.initial.fMax);
+					fscanf(pFile, "%f", &effect.shotAngleY.initial.fMin);
+				}
+				else if (strcmp(&read[0], "AddRand") == 0)
+				{
+					effect.shotAngleY.Add.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.shotAngleY.Add.fMax);
+					fscanf(pFile, "%f", &effect.shotAngleY.Add.fMin);
+				}
+				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+				{
+					break;
+				}
+			}
+		}
+		else if (strcmp(&read[0], "Aangle_Z") == 0)
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", &read);
+				if (strcmp(&read[0], "nValue") == 0)
+				{
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.shotAngleZ.fValue);
+				}
+				else if (strcmp(&read[0], "InitialRand") == 0)
+				{
+					effect.shotAngleZ.initial.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.shotAngleZ.initial.fMax);
+					fscanf(pFile, "%f", &effect.shotAngleZ.initial.fMin);
+				}
+				else if (strcmp(&read[0], "AddRand") == 0)
+				{
+					effect.shotAngleZ.Add.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.shotAngleZ.Add.fMax);
+					fscanf(pFile, "%f", &effect.shotAngleZ.Add.fMin);
 				}
 				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
 				{

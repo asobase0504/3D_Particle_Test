@@ -157,6 +157,7 @@
     <ClCompile Include="LoadEffect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="polygon.cpp" />
+    <ClCompile Include="SaveEffect.cpp" />
     <ClCompile Include="setup.cpp" />
     <ClCompile Include="spawn_effect.cpp" />
     <ClCompile Include="wall.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="LoadEffect.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="polygon.h" />
+    <ClInclude Include="SaveEffect.h" />
     <ClInclude Include="setup.h" />
     <ClInclude Include="spawn_effect.h" />
     <ClInclude Include="wall.h" />

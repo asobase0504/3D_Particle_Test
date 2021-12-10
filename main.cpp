@@ -523,12 +523,12 @@ void DrawFPS(void)
 			break;
 		case ADJUST_INFO_ROT:			// エフェクトの角度調整処理
 
-			sprintf(&aStrCopy[0], "本体角度[ G / H ]:%0.2f\n", pParticle->randAangle.initial.fMax);
+			sprintf(&aStrCopy[0], "本体角度[ G / H ]:%0.2f\n", pParticle->shotAngleZ.initial.fMax);
 			strcat(&aStr[0], &aStrCopy[0]);
 			break;
 		case ADJUST_INFO_SPREAD:		// エフェクトの発射角度調整処理
 
-			sprintf(&aStrCopy[0], "拡散角度[ Z / C ]:%0.2f\n", pParticle->randAangle.initial.fMax);
+			sprintf(&aStrCopy[0], "拡散角度[ Z / C ]:%0.2f\n", pParticle->shotAngleZ.initial.fMax);
 			strcat(&aStr[0], &aStrCopy[0]);
 			break;
 		case ADJUST_INFO_MOVE:			// エフェクトの移動量調整処理

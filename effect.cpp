@@ -281,8 +281,8 @@ void AddStat(SFluctFloat* fluct)
 void MoveEffect(Effect * effect)
 {
 	// 移動の決定
-	effect->move.x = sinf((D3DX_PI * effect->randAangle.fValue) + effect->rot.z) * effect->randSpeed.fValue;
-	effect->move.y = cosf((D3DX_PI * effect->randAangle.fValue) + effect->rot.z) * effect->randSpeed.fValue;
+	effect->move.x = sinf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->randSpeed.fValue;
+	effect->move.y = cosf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->randSpeed.fValue;
 
 	if (effect->Injection == PARTICLMODE_CONVERGENCE)	// 収縮
 	{
@@ -401,6 +401,11 @@ void DrawEffect(void)
 		// Zバッファの上書きを無効にする
 		pDevice->SetRenderState(D3DRS_ZENABLE, false);
 
+		// アルファテストを有効
+		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, true);
+		pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+
 		if (pEffect->blend == BLENDMODE_ADDITION)
 		{
 			// αブレンディングを加算合成に設定
@@ -424,6 +429,11 @@ void DrawEffect(void)
 
 		// Zバッファの上書きを無効にする
 		pDevice->SetRenderState(D3DRS_ZENABLE, true);
+
+		// アルファテストを有効
+		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, false);
+		pDevice->SetRenderState(D3DRS_ALPHAREF, 1);
+		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 
 		// テクスチャの解除
 		pDevice->SetTexture(0, NULL);
@@ -468,7 +478,7 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->colA.initial, &pEffect->colA.fValue);				// Alphaの出現時の数値
 		SetRandom(&pEffect->randSpeed.initial, &(pEffect->randSpeed.fValue));	// 移動量
 		SetRandom(&pEffect->randLife.initial, &(pEffect->randLife.nValue));		// 寿命
-		SetRandom(&pEffect->randAangle.initial, &(pEffect->randAangle.fValue));	// 発射角度
+		SetRandom(&pEffect->shotAngleZ.initial, &(pEffect->shotAngleZ.fValue));	// 発射角度
 
 		SetRandom(&pEffect->colR.Add, &pEffect->colR.fAddValue);				// Redの出現時の数値
 		SetRandom(&pEffect->colG.Add, &pEffect->colG.fAddValue);				// Greenの出現時の数値
@@ -477,7 +487,7 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->randSpeed.Add, &(pEffect->randSpeed.fAddValue));	// 移動量
 		SetRandom(&pEffect->randRadius.Add, &(pEffect->randRadius.fAddValue));	// 半径
 		SetRandom(&pEffect->randLife.Add, &(pEffect->randLife.nValue));			// 寿命
-		SetRandom(&pEffect->randAangle.Add, &(pEffect->randAangle.fAddValue));	// 発射角度
+		SetRandom(&pEffect->shotAngleZ.Add, &(pEffect->shotAngleZ.fAddValue));	// 発射角度
 
 		// 色の代入
 		pEffect->col = D3DXCOLOR(pEffect->colR.fValue, pEffect->colG.fValue, pEffect->colB.fValue, pEffect->colA.fValue);

@@ -140,20 +140,20 @@ typedef struct
 	D3DXVECTOR3		spaen_pos;			// 出現位置
 	D3DXVECTOR3		rand_pos;			// 発射位置
 	EFFECT_TEX		tex;				// テクスチャ情報
-	EFFECT_DIED		died;				// 死亡条件
-	EFFECT_ON_DIED	onDied;				// 死亡時
-	INJECTIONMODE	Injection;			// 射出モード
 	BLENDMODE		blend;				// ブレンドモード
 	float			fLength;			// 対角線の長さ
 	float			fAngele;			// 対角線の角度
-	float			fGravity;			// 重力
 	SFluctFloat		randRadius;			// 半径
 	SFluctFloat		width;				// 幅
 	SFluctFloat		height;				// 高さ
 	SFluctInt		randLife;			// 寿命
 
-	SFluctFloat		randAangle;			// 射出角度
-	SFluctFloat		SpreadRot;			// 拡散角度
+	// 射出系統変数
+	INJECTIONMODE	Injection;			// 射出モード
+	D3DXVECTOR3		shotAangle;			// 射出角度
+	SFluctFloat		shotAngleX;			// 射出角度(X)
+	SFluctFloat		shotAngleY;			// 射出角度(Y)
+	SFluctFloat		shotAngleZ;			// 射出角度(Z)
 
 	// 向き系統変数
 	D3DXVECTOR3		rot;				// 向き
@@ -162,6 +162,7 @@ typedef struct
 	SFluctFloat		rotZ;				// Zの向き
 	
 	// 移動系統変数
+	float			fGravity;			// 重力
 	D3DXVECTOR3		move;				// 移動量
 	SFluctFloat		randSpeed;			// 移動速度
 	
@@ -171,6 +172,10 @@ typedef struct
 	SFluctFloat		colG;				// g値
 	SFluctFloat		colB;				// b値
 	SFluctFloat		colA;				// a値
+
+	// 死亡時系統変数
+	EFFECT_DIED		died;				// 死亡条件
+	EFFECT_ON_DIED	onDied;				// 死亡時
 
 	int				nPopCnt;			// 一度に出すエフェクト数
 	int				nCountParticle;		// パーティクルの発生カウント
@@ -187,7 +192,6 @@ void InitEffect(void);
 void UninitEffect(void);
 void UpdateEffect(void);
 void DrawEffect(void);
-void DrawBillboardEffect(void);
 void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type);
 
 void SetRandom(FRandFloat* fluct, float* fValue);	// float型の乱数適用

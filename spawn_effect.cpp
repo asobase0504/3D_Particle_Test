@@ -10,6 +10,7 @@
 //************************************************************
 #include "main.h"
 #include "spawn_effect.h"
+#include "SaveEffect.h"
 #include "adjusteffect.h"
 #include "LoadEffect.h"
 #include "input.h"
@@ -213,7 +214,7 @@ void UpdateSpawnEffect(void)
 	// データの保存
 	if (GetKeyboardTrigger(DIK_F3))
 	{// [F3]キーが押されたとき
-		SaveSpawnEffect();
+		SaveEffect(&(g_aParticle[s_nPointCnt]));
 	}
 #endif // !TEAT_MODE
 }
@@ -478,144 +479,6 @@ void AdjustPopEffect(void)
 }
 
 //********************************************************************************
-// エフェクトのセーブ処理
-//********************************************************************************
-void SaveSpawnEffect(void)
-{
-	// ファイルポインタの
-	Effect* pParticle = &(g_aParticle[s_nPointCnt]);
-	FILE * pFile;
-
-	//ファイルを開く
-	pFile = fopen("data/FILE/Particle2.txt", "w");
-
-	if (pFile != NULL)
-	{// ファイルが開いた場合
-	 // データの読み込み
-		 // Redカラー
-		fprintf(pFile, "TEXTURE = %d\n",(int)pParticle->tex);
-
-		fprintf(pFile, "ColRed\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->colR.fValue);
-		if (pParticle->colR.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %f %f\n", pParticle->colR.initial.fMax, pParticle->colR.initial.fMin);
-		}
-		if (pParticle->colR.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %f %f\n", pParticle->colR.Add.fMax, pParticle->colR.Add.fMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// Blueカラー
-		fprintf(pFile, "ColBlue\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->colB.fValue);
-		if (pParticle->colB.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %f %f\n", pParticle->colB.initial.fMax, pParticle->colB.initial.fMin);
-		}
-		if (pParticle->colB.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %f %f\n", pParticle->colB.Add.fMax, pParticle->colB.Add.fMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// Greenカラー
-		fprintf(pFile, "ColGreen\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->colG.fValue);
-		if (pParticle->colG.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %f %f\n", pParticle->colG.initial.fMax, pParticle->colG.initial.fMin);
-		}
-		if (pParticle->colG.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %f %f\n", pParticle->colG.Add.fMax, pParticle->colG.Add.fMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// Alphaカラー
-		fprintf(pFile, "ColAlpha\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->colA.fValue);
-		if (pParticle->colA.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %f %f\n", pParticle->colA.initial.fMax, pParticle->colA.initial.fMin);
-		}
-		if (pParticle->colA.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %f %f\n", pParticle->colA.Add.fMax, pParticle->colA.Add.fMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// 半径
-		fprintf(pFile, "Radius\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->randRadius.fValue);
-		if (pParticle->randRadius.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %f %f\n", pParticle->randRadius.initial.fMax, pParticle->randRadius.initial.fMin);
-		}
-		if (pParticle->randRadius.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %f %f\n", pParticle->randRadius.Add.fMax, pParticle->randRadius.Add.fMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// 寿命
-		fprintf(pFile, "Life\n");
-		fprintf(pFile, "nValue = %d\n", pParticle->randLife.nValue);
-		if (pParticle->randLife.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %d %d\n", pParticle->randLife.initial.nMax, pParticle->randLife.initial.nMin);
-		}
-		if (pParticle->randLife.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %d %d\n", pParticle->randLife.Add.nMax, pParticle->randLife.Add.nMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// 移動速度
-		fprintf(pFile, "Speed\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->randSpeed.fValue);
-		if (pParticle->randSpeed.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %f %f\n", pParticle->randSpeed.initial.fMax, pParticle->randSpeed.initial.fMin);
-		}
-		if (pParticle->randSpeed.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %f %f\n", pParticle->randSpeed.Add.fMax, pParticle->randSpeed.Add.fMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// 発射角度
-		fprintf(pFile, "Aangle\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->randAangle.fValue);
-		if (pParticle->randAangle.initial.bIsRandom)
-		{
-			fprintf(pFile, "InitialRand = %f %f\n", pParticle->randAangle.initial.fMax, pParticle->randAangle.initial.fMin);
-		}
-		if (pParticle->randAangle.Add.bIsRandom)
-		{
-			fprintf(pFile, "AddRand = %f %f\n", pParticle->randAangle.Add.fMax, pParticle->randAangle.Add.fMin);
-		}
-		fprintf(pFile, "end\n");
-
-		// 重力
-		fprintf(pFile, "gravity\n");
-		fprintf(pFile, "nValue = %f\n", pParticle->fGravity);
-		fprintf(pFile, "end\n");
-
-		// 終了
-		fprintf(pFile, "\nFileEnd\n");
-		//ファイルを閉じる
-		fclose(pFile);
-	}
-	else
-	{//ファイルが開けない場合
-		printf("\n * * * ファイルが開けません * * * \n");
-	}
-
-}
-
-//********************************************************************************
 // エフェクトの描画処理
 //********************************************************************************
 void DrawSpawnEffect(void)
@@ -657,7 +520,7 @@ void SetSpawnEffect(void)
 		SetRandom(&pParticle->colA.initial, &pParticle->colA.fValue);				// Alphaの出現時の数値
 		SetRandom(&pParticle->randSpeed.initial, &pParticle->randSpeed.fValue);
 		SetRandom(&pParticle->randRadius.initial, &pParticle->randRadius.fValue);
-		SetRandom(&pParticle->randAangle.initial, &pParticle->randAangle.fValue);
+		SetRandom(&pParticle->shotAngleZ.initial, &pParticle->shotAngleZ.fValue);
 		//SetRandom(&pParticle->randLife, &pParticle->randLife.fValue);
 		pParticle->col.r = pParticle->colR.fValue;
 		pParticle->col.g = pParticle->colG.fValue;

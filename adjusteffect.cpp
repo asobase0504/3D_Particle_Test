@@ -282,24 +282,24 @@ void AdjustSpreadEffect(Effect* pParticle)
 {
 	if (GetKeyboardPress(DIK_Z))
 	{// [Z]キーが押されたとき
-		if (pParticle->randAangle.initial.fMax > D3DXToRadian(0))
+		if (pParticle->shotAngleZ.initial.fMax > D3DXToRadian(0))
 		{
-			pParticle->randAangle.initial.fMax -= D3DXToRadian(1);
+			pParticle->shotAngleZ.initial.fMax -= D3DXToRadian(1);
 		}
-		if (pParticle->randAangle.initial.fMax <= D3DXToRadian(0))
+		if (pParticle->shotAngleZ.initial.fMax <= D3DXToRadian(0))
 		{
-			pParticle->randAangle.initial.fMax = D3DXToRadian(0);
+			pParticle->shotAngleZ.initial.fMax = D3DXToRadian(0);
 		}
 	}
 	else if (GetKeyboardPress(DIK_C))
 	{// [C]キーが押されたとき
-		if (pParticle->randAangle.initial.fMax <= D3DX_PI)
+		if (pParticle->shotAngleZ.initial.fMax <= D3DX_PI)
 		{
-			pParticle->randAangle.initial.fMax += D3DXToRadian(1);
+			pParticle->shotAngleZ.initial.fMax += D3DXToRadian(1);
 		}
-		if (pParticle->randAangle.initial.fMax >= D3DX_PI)
+		if (pParticle->shotAngleZ.initial.fMax >= D3DX_PI)
 		{
-			pParticle->randAangle.initial.fMax = D3DXToRadian(360);
+			pParticle->shotAngleZ.initial.fMax = D3DXToRadian(360);
 		}
 	}
 

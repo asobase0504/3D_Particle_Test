@@ -1,3 +1,4 @@
+TEXTURE = 2
 ColRed
 nValue = 1.000000
 end

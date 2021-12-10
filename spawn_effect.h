@@ -93,7 +93,6 @@ void UninitSpawnEffect(void);		// スポーンエフェクトの終了処理
 void UpdateSpawnEffect(void);		// スポーンエフェクトの更新処理
 void AdjustCountSpawnEffect(void);	// スポーンエフェクトの数の調整
 void MoveSpawnEffect(void);			// スポーンエフェクトの移動処理
-void SaveSpawnEffect(void);			// エフェクトのセーブ処理
 void DrawSpawnEffect(void);			// スポーンエフェクトの描画処理
 void SetSpawnEffect(void);			// スポーンエフェクトの設定処理
 Effect *GetParticle(void);		// パーティクルの情報取得処理
