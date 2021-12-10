@@ -150,7 +150,7 @@ typedef struct
 
 	// 射出系統変数
 	INJECTIONMODE	Injection;			// 射出モード
-	D3DXVECTOR3		shotAangle;			// 射出角度
+	D3DXVECTOR3		shotAngle;			// 射出角度
 	SFluctFloat		shotAngleX;			// 射出角度(X)
 	SFluctFloat		shotAngleY;			// 射出角度(Y)
 	SFluctFloat		shotAngleZ;			// 射出角度(Z)

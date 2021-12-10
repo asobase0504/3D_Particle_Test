@@ -478,6 +478,8 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->colA.initial, &pEffect->colA.fValue);				// Alpha‚ÌoŒ»Žž‚Ì”’l
 		SetRandom(&pEffect->randSpeed.initial, &(pEffect->randSpeed.fValue));	// ˆÚ“®—Ê
 		SetRandom(&pEffect->randLife.initial, &(pEffect->randLife.nValue));		// Žõ–½
+		SetRandom(&pEffect->shotAngleX.initial, &(pEffect->shotAngleX.fValue));	// ”­ŽËŠp“x
+		SetRandom(&pEffect->shotAngleY.initial, &(pEffect->shotAngleY.fValue));	// ”­ŽËŠp“x
 		SetRandom(&pEffect->shotAngleZ.initial, &(pEffect->shotAngleZ.fValue));	// ”­ŽËŠp“x
 
 		SetRandom(&pEffect->colR.Add, &pEffect->colR.fAddValue);				// Red‚ÌoŒ»Žž‚Ì”’l
@@ -487,7 +489,12 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->randSpeed.Add, &(pEffect->randSpeed.fAddValue));	// ˆÚ“®—Ê
 		SetRandom(&pEffect->randRadius.Add, &(pEffect->randRadius.fAddValue));	// ”¼Œa
 		SetRandom(&pEffect->randLife.Add, &(pEffect->randLife.nValue));			// Žõ–½
+		SetRandom(&pEffect->shotAngleX.Add, &(pEffect->shotAngleX.fAddValue));	// ”­ŽËŠp“x
+		SetRandom(&pEffect->shotAngleY.Add, &(pEffect->shotAngleY.fAddValue));	// ”­ŽËŠp“x
 		SetRandom(&pEffect->shotAngleZ.Add, &(pEffect->shotAngleZ.fAddValue));	// ”­ŽËŠp“x
+
+		// Šp“x‚Ì‘ã“ü
+		pEffect->shotAngle = D3DXVECTOR3(pEffect->shotAngleX.fValue, pEffect->shotAngleY.fValue, pEffect->shotAngleZ.fValue);
 
 		// F‚Ì‘ã“ü
 		pEffect->col = D3DXCOLOR(pEffect->colR.fValue, pEffect->colG.fValue, pEffect->colB.fValue, pEffect->colA.fValue);
