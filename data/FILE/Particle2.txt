@@ -2,18 +2,22 @@ TEXTURE = 2
 
 ColRed
 nValue = 1.000000
+InitialRand = 1.000000 0.000000
 end
 
 ColBlue
 nValue = 1.000000
+InitialRand = 1.000000 0.000000
 end
 
 ColGreen
 nValue = 1.000000
+InitialRand = 1.000000 0.000000
 end
 
 ColAlpha
 nValue = 1.000000
+InitialRand = 1.000000 0.000000
 end
 
 Radius
@@ -37,7 +41,8 @@ nValue = 0.000000
 end
 
 Aangle_Z
-nValue = 0.000000
+nValue = 0.729751
+InitialRand = 6.283185 0.017453
 end
 
 gravity
