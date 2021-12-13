@@ -11,12 +11,19 @@ end
 ColAlpha
 nValue = 1.000000
 end
-Radius
+
+Width
 nValue = 5.000000
 end
+
+Height
+nValue = 5.000000
+end
+
 Life
 nValue = 50
 end
+
 Speed_X
 nValue = 2.000000
 end

@@ -191,7 +191,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 				}
 			}
 		}
-		else if (strcmp(&read[0], "Radius") == 0)
+		else if (strcmp(&read[0], "Width") == 0)
 		{
 			while (1)
 			{
@@ -199,21 +199,51 @@ Effect LoadEffect(EFFECT_TYPE type)
 				if (strcmp(&read[0], "nValue") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randRadius.fValue);
+					fscanf(pFile, "%f", &effect.width.fValue);
 				}
 				else if (strcmp(&read[0], "InitialRand") == 0)
 				{
-					effect.randRadius.initial.bIsRandom = true;
+					effect.width.initial.bIsRandom = true;
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randRadius.initial.fMax);
-					fscanf(pFile, "%f", &effect.randRadius.initial.fMin);
+					fscanf(pFile, "%f", &effect.width.initial.fMax);
+					fscanf(pFile, "%f", &effect.width.initial.fMin);
 				}
 				else if (strcmp(&read[0], "AddRand") == 0)
 				{
-					effect.randRadius.Add.bIsRandom = true;
+					effect.width.Add.bIsRandom = true;
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randRadius.Add.fMax);
-					fscanf(pFile, "%f", &effect.randRadius.Add.fMin);
+					fscanf(pFile, "%f", &effect.width.Add.fMax);
+					fscanf(pFile, "%f", &effect.width.Add.fMin);
+				}
+				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+				{
+					break;
+				}
+			}
+		}
+		else if (strcmp(&read[0], "Height") == 0)
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", &read);
+				if (strcmp(&read[0], "nValue") == 0)
+				{
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.height.fValue);
+				}
+				else if (strcmp(&read[0], "InitialRand") == 0)
+				{
+					effect.height.initial.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.height.initial.fMax);
+					fscanf(pFile, "%f", &effect.height.initial.fMin);
+				}
+				else if (strcmp(&read[0], "AddRand") == 0)
+				{
+					effect.height.Add.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.height.Add.fMax);
+					fscanf(pFile, "%f", &effect.height.Add.fMin);
 				}
 				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
 				{

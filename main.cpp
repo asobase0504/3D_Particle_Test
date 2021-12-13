@@ -263,7 +263,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	}
 
 	// レンダーステート設定
-	g_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);				// カリングの設定
+	g_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);				// カリングの設定
 	g_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);				// アルファブレンドの設定
 	g_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// アルファブレンドの設定
 	g_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// アルファブレンドの設定
@@ -548,19 +548,19 @@ void DrawFPS(void)
 			strcat(&aStr[0], &aStrCopy[0]);
 			break;
 		case ADJUST_INFO_RADIUS:		// エフェクトの半径調整処理
-			sprintf(&aStrCopy[0], "通常時の半径[ B / N ]:%0.2f\n", pParticle->randRadius.fValue);
+			sprintf(&aStrCopy[0], "通常時の幅[ B / N ]:%0.2f\n", pParticle->width.fValue);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "出現時の乱数[ R ]:%s\n", pParticle->randRadius.initial.bIsRandom ? "true" : "false");
+			sprintf(&aStrCopy[0], "出現時の乱数[ R ]:%s\n", pParticle->width.initial.bIsRandom ? "true" : "false");
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "出現時の乱数最小数[ T / Y ]:%0.2f\n", pParticle->randRadius.initial.fMin);
+			sprintf(&aStrCopy[0], "出現時の乱数最小数[ T / Y ]:%0.2f\n", pParticle->width.initial.fMin);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "出現時の乱数最大数[ U / I ]:%0.2f\n", pParticle->randRadius.initial.fMax);
+			sprintf(&aStrCopy[0], "出現時の乱数最大数[ U / I ]:%0.2f\n", pParticle->width.initial.fMax);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "加算時の乱数[ F ]:%s\n", pParticle->randRadius.Add.bIsRandom ? "true" : "false");
+			sprintf(&aStrCopy[0], "加算時の乱数[ F ]:%s\n", pParticle->width.Add.bIsRandom ? "true" : "false");
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "加算時の乱数最小数[ G / H ]:%0.2f\n", pParticle->randRadius.Add.fMin);
+			sprintf(&aStrCopy[0], "加算時の乱数最小数[ G / H ]:%0.2f\n", pParticle->width.Add.fMin);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "加算時の乱数最大数[ J / K ]:%0.2f\n", pParticle->randRadius.Add.fMax);
+			sprintf(&aStrCopy[0], "加算時の乱数最大数[ J / K ]:%0.2f\n", pParticle->width.Add.fMax);
 			strcat(&aStr[0], &aStrCopy[0]);
 			break;
 		case ADJUST_INFO_LIFE:			// エフェクトの寿命調整処理

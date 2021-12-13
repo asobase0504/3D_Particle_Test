@@ -142,7 +142,6 @@ typedef struct
 	EFFECT_TEX tex;			// テクスチャ情報
 	float fLength;			// 対角線の長さ
 	float fAngele;			// 対角線の角度
-	SFluctFloat randRadius;	// 半径
 	SFluctFloat width;		// 幅
 	SFluctFloat height;		// 高さ
 	SFluctInt randLife;		// 寿命

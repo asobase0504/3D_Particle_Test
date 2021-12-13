@@ -519,7 +519,8 @@ void SetSpawnEffect(void)
 		SetRandom(&pParticle->colB.initial, &pParticle->colB.fValue);				// Blueの出現時の数値
 		SetRandom(&pParticle->colA.initial, &pParticle->colA.fValue);				// Alphaの出現時の数値
 		SetRandom(&pParticle->speedX.initial, &pParticle->speedX.fValue);
-		SetRandom(&pParticle->randRadius.initial, &pParticle->randRadius.fValue);
+		SetRandom(&pParticle->width.initial, &pParticle->width.fValue);
+		SetRandom(&pParticle->height.initial, &pParticle->height.fValue);
 		SetRandom(&pParticle->shotAngleZ.initial, &pParticle->shotAngleZ.fValue);
 		//SetRandom(&pParticle->randLife, &pParticle->randLife.fValue);
 		pParticle->col.r = pParticle->colR.fValue;

@@ -67,16 +67,29 @@ void SaveEffect(Effect* effect)
 		}
 		fprintf(pFile, "end\n\n");
 
-		// ”¼Œa
-		fprintf(pFile, "Radius\n");
-		fprintf(pFile, "nValue = %f\n", effect->randRadius.fValue);
-		if (effect->randRadius.initial.bIsRandom)
+		// •
+		fprintf(pFile, "Width\n");
+		fprintf(pFile, "nValue = %f\n", effect->width.fValue);
+		if (effect->width.initial.bIsRandom)
 		{
-			fprintf(pFile, "InitialRand = %f %f\n", effect->randRadius.initial.fMax, effect->randRadius.initial.fMin);
+			fprintf(pFile, "InitialRand = %f %f\n", effect->width.initial.fMax, effect->width.initial.fMin);
 		}
-		if (effect->randRadius.Add.bIsRandom)
+		if (effect->width.Add.bIsRandom)
 		{
-			fprintf(pFile, "AddRand = %f %f\n", effect->randRadius.Add.fMax, effect->randRadius.Add.fMin);
+			fprintf(pFile, "AddRand = %f %f\n", effect->width.Add.fMax, effect->width.Add.fMin);
+		}
+		fprintf(pFile, "end\n\n");
+
+		// ‚‚³
+		fprintf(pFile, "Height\n");
+		fprintf(pFile, "nValue = %f\n", effect->height.fValue);
+		if (effect->height.initial.bIsRandom)
+		{
+			fprintf(pFile, "InitialRand = %f %f\n", effect->height.initial.fMax, effect->height.initial.fMin);
+		}
+		if (effect->height.Add.bIsRandom)
+		{
+			fprintf(pFile, "AddRand = %f %f\n", effect->height.Add.fMax, effect->height.Add.fMin);
 		}
 		fprintf(pFile, "end\n\n");
 

@@ -78,7 +78,7 @@ void AdjustOneShotEffect(Effect* pParticle)
 //********************************************************************************
 void AdjustRadiusEffect(Effect* pParticle)
 {
-	AdjustSFluctFloat(&(pParticle->randRadius), 0.1f, MAX_RADIUS_EFFECT, MIN_RADIUS_EFFECT);
+	AdjustSFluctFloat(&(pParticle->width), 0.1f, MAX_RADIUS_EFFECT, MIN_RADIUS_EFFECT);
 }
 
 //********************************************************************************
