@@ -2,22 +2,18 @@ TEXTURE = 2
 
 ColRed
 nValue = 1.000000
-InitialRand = 1.000000 0.000000
 end
 
 ColBlue
 nValue = 1.000000
-InitialRand = 1.000000 0.000000
 end
 
 ColGreen
 nValue = 1.000000
-InitialRand = 1.000000 0.000000
 end
 
 ColAlpha
 nValue = 1.000000
-InitialRand = 1.000000 0.000000
 end
 
 Radius
@@ -28,8 +24,16 @@ Life
 nValue = 50
 end
 
-Speed
-nValue = 1.900000
+Speed_X
+nValue = 0.000000
+end
+
+Speed_Y
+nValue = 0.000000
+end
+
+Speed_Z
+nValue = 0.000000
 end
 
 Aangle_X
@@ -41,12 +45,20 @@ nValue = 0.000000
 end
 
 Aangle_Z
-nValue = 0.729751
+nValue = 3.686024
 InitialRand = 6.283185 0.017453
 end
 
 gravity
 nValue = 0.001000
+end
+
+DivisionU
+nValue = 0
+end
+
+DivisionV
+nValue = 0
 end
 
 

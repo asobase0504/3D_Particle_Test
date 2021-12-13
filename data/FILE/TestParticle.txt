@@ -17,8 +17,17 @@ end
 Life
 nValue = 50
 end
-Speed
-nValue = 1.900000
+Speed_X
+nValue = 2.000000
+end
+
+Speed_Y
+nValue = 2.000000
+end
+
+Speed_Z
+nValue = 2.000000
+end
 end
 Aangle_Z
 nValue = 0.000000

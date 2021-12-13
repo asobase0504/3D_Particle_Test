@@ -39,7 +39,7 @@
 //********************************************************************************
 void AdjustMoveEffect(Effect* pParticle)
 {
-	AdjustSFluctFloat(&(pParticle->randSpeed), 0.1f, MAX_SPEED_EFFECT, 0.0f);
+	AdjustSFluctFloat(&(pParticle->speedX), 0.1f, MAX_SPEED_EFFECT, 0.0f);
 }
 
 //********************************************************************************

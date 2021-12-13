@@ -532,19 +532,19 @@ void DrawFPS(void)
 			strcat(&aStr[0], &aStrCopy[0]);
 			break;
 		case ADJUST_INFO_MOVE:			// エフェクトの移動量調整処理
-			sprintf(&aStrCopy[0], "通常時の移動速度[ B / N ]:%0.2f\n", pParticle->randSpeed.fValue);
+			sprintf(&aStrCopy[0], "通常時の移動速度[ B / N ]:%0.2f\n", pParticle->speedX.fValue);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "出現時の乱数[ R ]:%s\n", pParticle->randSpeed.initial.bIsRandom ? "true" : "false");
+			sprintf(&aStrCopy[0], "出現時の乱数[ R ]:%s\n", pParticle->speedX.initial.bIsRandom ? "true" : "false");
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "出現時の乱数最小数[ T / Y ]:%0.2f\n", pParticle->randSpeed.initial.fMin);
+			sprintf(&aStrCopy[0], "出現時の乱数最小数[ T / Y ]:%0.2f\n", pParticle->speedX.initial.fMin);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "出現時の乱数最大数[ U / I ]:%0.2f\n", pParticle->randSpeed.initial.fMax);
+			sprintf(&aStrCopy[0], "出現時の乱数最大数[ U / I ]:%0.2f\n", pParticle->speedX.initial.fMax);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "加算時の乱数[ F ]:%s\n", pParticle->randSpeed.Add.bIsRandom ? "true" : "false");
+			sprintf(&aStrCopy[0], "加算時の乱数[ F ]:%s\n", pParticle->speedX.Add.bIsRandom ? "true" : "false");
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "加算時の乱数最小数[ G / H ]:%0.2f\n", pParticle->randSpeed.Add.fMin);
+			sprintf(&aStrCopy[0], "加算時の乱数最小数[ G / H ]:%0.2f\n", pParticle->speedX.Add.fMin);
 			strcat(&aStr[0], &aStrCopy[0]);
-			sprintf(&aStrCopy[0], "加算時の乱数最大数[ J / K ]:%0.2f\n", pParticle->randSpeed.Add.fMax);
+			sprintf(&aStrCopy[0], "加算時の乱数最大数[ J / K ]:%0.2f\n", pParticle->speedX.Add.fMax);
 			strcat(&aStr[0], &aStrCopy[0]);
 			break;
 		case ADJUST_INFO_RADIUS:		// エフェクトの半径調整処理

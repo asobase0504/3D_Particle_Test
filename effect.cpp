@@ -90,18 +90,6 @@ void InitEffect(void)
 	ZeroMemory(s_aEffect, sizeof(s_aEffect));
 
 	Effect* pEffect;	// エフェクトのポインタ型
-	
-	// エフェクトの情報の初期化
-	for (int i = 0; i < MAX_EFFECT; i++)
-	{
-		pEffect = &(s_aEffect[i]);	// エフェクトのポインタ型
-
-		// 対角線の長さを算出する
-		pEffect->fLength = sqrtf(((pEffect->randRadius.fValue * pEffect->randRadius.fValue) + (pEffect->randRadius.fValue * pEffect->randRadius.fValue)) / 2.0f);
-
-		// 対角線の角度を算出
-		pEffect->fAngele = atan2f(pEffect->randRadius.fValue, pEffect->randRadius.fValue);
-	}
 
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_EFFECT,		// 確保するバッファサイズ
@@ -144,6 +132,12 @@ void InitEffect(void)
 		pVtx[1].col = pEffect->col;
 		pVtx[2].col = pEffect->col;
 		pVtx[3].col = pEffect->col;
+
+		//各頂点の法線の設定　※　ベクトルの大きさは1にする必要がある
+		pVtx[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		pVtx[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		pVtx[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+		pVtx[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
 		// テクスチャ座標
 		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -209,8 +203,7 @@ void UpdateEffect(void)
 		pEffect->move.y -= pEffect->fGravity;
 
 		// 位置の更新
-		pEffect->pos.x += pEffect->move.x;
-		pEffect->pos.y += pEffect->move.y;
+		pEffect->pos += pEffect->move;
 
 		// 頂点バッファーの設定
 		VERTEX_3D *pVtx;	// 頂点情報へのポインタを生成
@@ -226,12 +219,32 @@ void UpdateEffect(void)
 		pVtx[2].col = pEffect->col;
 		pVtx[3].col = pEffect->col;
 
+		//テクスチャ設定
+		pEffect->nCntAnim++;
+		if ((pEffect->nCntAnim % pEffect->nDivisionMAX) == 0)
+		{
+			pEffect->nPatternAnim = (pEffect->nPatternAnim + 1) % pEffect->nDivisionMAX;
+
+			float fLeft = 1.0f / pEffect->nDivisionU * (pEffect->nPatternAnim % pEffect->nDivisionU);
+			float fRight = 1.0f / pEffect->nDivisionU *(pEffect->nPatternAnim % pEffect->nDivisionU) + 1.0f / pEffect->nDivisionU;
+			float fUp = 1.0f / pEffect->nDivisionV * (pEffect->nPatternAnim / pEffect->nDivisionU);
+			float fDown = 1.0f / pEffect->nDivisionV * (pEffect->nPatternAnim / pEffect->nDivisionU + 1.0f / pEffect->nDivisionV * pEffect->nDivisionV);
+
+			pVtx[0].tex = D3DXVECTOR2(fLeft, fUp);
+			pVtx[1].tex = D3DXVECTOR2(fRight, fUp);
+			pVtx[2].tex = D3DXVECTOR2(fLeft, fDown);
+			pVtx[3].tex = D3DXVECTOR2(fRight, fDown);
+
+			//表示座標を更新
+		}
+
 		// 頂点バッファをアンロック
 		s_pVtxBuff->Unlock();
 
 		// 死亡条件を満たしているかチェック
 		if (!(DiedCriteriaEffect(pEffect)))
 		{
+			// 死亡処理
 			DiedEffect(pEffect);
 		}
 
@@ -281,8 +294,28 @@ void AddStat(SFluctFloat* fluct)
 void MoveEffect(Effect * effect)
 {
 	// 移動の決定
-	effect->move.x = sinf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->randSpeed.fValue;
-	effect->move.y = cosf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->randSpeed.fValue;
+	effect->move.x = sinf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->speedX.fValue;
+	effect->move.y = tanf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->speedY.fValue;
+	effect->move.z = cosf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->speedZ.fValue;
+
+	//for (int nHeight = 0; nHeight <= s_aMesh[0].nSurfaceHeight; nHeight++)
+	//{
+	//	float fRotHeight = D3DX_PI / s_aMesh[0].nSurfaceHeight;
+	//	float fHeight = cosf(fRotHeight * nHeight) * s_aMesh[0].fLineHeight;
+	//	for (int nWidth = 0; nWidth <= s_aMesh[0].nSurfaceWidth; nWidth++)
+	//	{
+	//		float fRotWidth = 2.0f * D3DX_PI / s_aMesh[0].nSurfaceWidth * nWidth;
+	//		NormalizeRot(fRotWidth);
+
+	//		effect->move.x = cosf(fRotWidth) * sinf(fRotHeight) * effect->speedX.fValue;
+	//		effect->move.y = cosf(fRotHeight) * effect->speedX.fValue;
+	//		effect->move.z = sinf(fRotWidth) * sinf(fRotHeight) * effect->speedX.fValue;
+
+	//		effect->move.x = -sinf((D3DX_PI * nCntParticle / 10) - (s_aParticle[nCntParticle].fAngle / (5 * s_aParticle[nCntParticle].fAttenuation)));
+	//		effect->move.y -= tanf(D3DX_PI) * s_aParticle[nCntParticle].fRadius / 2;
+	//		effect->move.z = -cosf((D3DX_PI * nCntParticle / 10) - (s_aParticle[nCntParticle].fAngle / (5 * s_aParticle[nCntParticle].fAttenuation)));
+	//	}
+	//}
 
 	if (effect->Injection == PARTICLMODE_CONVERGENCE)	// 収縮
 	{
@@ -316,16 +349,16 @@ void MoveEffect(Effect * effect)
 		}
 
 		// 位置の更新
-		effect->move.x = sinf(fRotMove) * effect->randSpeed.fValue;
-		effect->move.y = cosf(fRotMove) * effect->randSpeed.fValue;
+		effect->move.x = sinf(fRotMove) * effect->speedX.fValue;
+		effect->move.y = cosf(fRotMove) * effect->speedX.fValue;
 	}
 	if (effect->Injection == PARTICLMODE_ROTATION)	// ローテーション
 	{
 		effect->rot.z += D3DXToRadian(1);
 
 		// 移動量の算出
-		effect->move.x = sinf(effect->rot.z) * effect->randSpeed.fValue;
-		effect->move.y = cosf(effect->rot.z) * effect->randSpeed.fValue;
+		effect->move.x = sinf(effect->rot.z) * effect->speedX.fValue;
+		effect->move.y = cosf(effect->rot.z) * effect->speedX.fValue;
 	}
 
 }
@@ -372,15 +405,18 @@ void DrawEffect(void)
 		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 
 		// カメラの逆行列を設定
-		pEffect->mtxWorld._11 = mtxView._11;
-		pEffect->mtxWorld._12 = mtxView._21;
-		pEffect->mtxWorld._13 = mtxView._31;
-		pEffect->mtxWorld._21 = mtxView._12;
-		pEffect->mtxWorld._22 = mtxView._22;
-		pEffect->mtxWorld._23 = mtxView._32;
-		pEffect->mtxWorld._31 = mtxView._13;
-		pEffect->mtxWorld._32 = mtxView._23;
-		pEffect->mtxWorld._33 = mtxView._33;
+		if (pEffect->bIsBillboard)
+		{
+			pEffect->mtxWorld._11 = mtxView._11;
+			pEffect->mtxWorld._12 = mtxView._21;
+			pEffect->mtxWorld._13 = mtxView._31;
+			pEffect->mtxWorld._21 = mtxView._12;
+			pEffect->mtxWorld._22 = mtxView._22;
+			pEffect->mtxWorld._23 = mtxView._32;
+			pEffect->mtxWorld._31 = mtxView._13;
+			pEffect->mtxWorld._32 = mtxView._23;
+			pEffect->mtxWorld._33 = mtxView._33;
+		}
 
 		// 位置を反映
 		D3DXMatrixTranslation(&mtxTrans, pEffect->pos.x, pEffect->pos.y, pEffect->pos.z);		// 行列移動関数(第１引数にX,Y,Z方向の移動行列を作成)
@@ -476,8 +512,11 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->colG.initial, &pEffect->colG.fValue);				// Greenの出現時の数値
 		SetRandom(&pEffect->colB.initial, &pEffect->colB.fValue);				// Blueの出現時の数値
 		SetRandom(&pEffect->colA.initial, &pEffect->colA.fValue);				// Alphaの出現時の数値
-		SetRandom(&pEffect->randSpeed.initial, &(pEffect->randSpeed.fValue));	// 移動量
+		SetRandom(&pEffect->speedX.initial, &(pEffect->speedX.fValue));			// 移動量
+		SetRandom(&pEffect->speedY.initial, &(pEffect->speedY.fValue));			// 移動量
+		SetRandom(&pEffect->speedZ.initial, &(pEffect->speedZ.fValue));			// 移動量
 		SetRandom(&pEffect->randLife.initial, &(pEffect->randLife.nValue));		// 寿命
+		SetRandom(&pEffect->randRadius.initial, &(pEffect->randRadius.fValue));	// 半径
 		SetRandom(&pEffect->shotAngleX.initial, &(pEffect->shotAngleX.fValue));	// 発射角度
 		SetRandom(&pEffect->shotAngleY.initial, &(pEffect->shotAngleY.fValue));	// 発射角度
 		SetRandom(&pEffect->shotAngleZ.initial, &(pEffect->shotAngleZ.fValue));	// 発射角度
@@ -486,18 +525,30 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->colG.Add, &pEffect->colG.fAddValue);				// Greenの出現時の数値
 		SetRandom(&pEffect->colB.Add, &pEffect->colB.fAddValue);				// Blueの出現時の数値
 		SetRandom(&pEffect->colA.Add, &pEffect->colA.fAddValue);				// Alphaの出現時の数値
-		SetRandom(&pEffect->randSpeed.Add, &(pEffect->randSpeed.fAddValue));	// 移動量
+		SetRandom(&pEffect->speedX.Add, &(pEffect->speedX.fAddValue));			// 移動量
+		SetRandom(&pEffect->speedY.Add, &(pEffect->speedY.fAddValue));			// 移動量
+		SetRandom(&pEffect->speedZ.Add, &(pEffect->speedZ.fAddValue));			// 移動量
 		SetRandom(&pEffect->randRadius.Add, &(pEffect->randRadius.fAddValue));	// 半径
 		SetRandom(&pEffect->randLife.Add, &(pEffect->randLife.nValue));			// 寿命
 		SetRandom(&pEffect->shotAngleX.Add, &(pEffect->shotAngleX.fAddValue));	// 発射角度
 		SetRandom(&pEffect->shotAngleY.Add, &(pEffect->shotAngleY.fAddValue));	// 発射角度
 		SetRandom(&pEffect->shotAngleZ.Add, &(pEffect->shotAngleZ.fAddValue));	// 発射角度
 
+		pEffect->nDivisionU = 1;
+		pEffect->nDivisionV = 1;
+
+		pEffect->nDivisionMAX = pEffect->nDivisionU * pEffect->nDivisionV;	// 分割数の計算
+
 		// 角度の代入
-		pEffect->shotAngle = D3DXVECTOR3(pEffect->shotAngleX.fValue, pEffect->shotAngleY.fValue, pEffect->shotAngleZ.fValue);
+		pEffect->shotAngle.x = pEffect->shotAngleX.fValue;
+		pEffect->shotAngle.y = pEffect->shotAngleY.fValue;
+		pEffect->shotAngle.z = pEffect->shotAngleZ.fValue;
 
 		// 色の代入
-		pEffect->col = D3DXCOLOR(pEffect->colR.fValue, pEffect->colG.fValue, pEffect->colB.fValue, pEffect->colA.fValue);
+		pEffect->col.r = pEffect->colR.fValue;
+		pEffect->col.g = pEffect->colG.fValue;
+		pEffect->col.b = pEffect->colB.fValue;
+		pEffect->col.a = pEffect->colA.fValue;
 
 		// 対角線の長さを算出する
 		pEffect->fLength = sqrtf(((pEffect->randRadius.fValue * pEffect->randRadius.fValue) + (pEffect->randRadius.fValue * pEffect->randRadius.fValue)) / 2.0f);

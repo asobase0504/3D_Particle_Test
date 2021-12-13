@@ -136,53 +136,66 @@ typedef struct
 //------------------------------------
 typedef struct
 {
-	D3DXVECTOR3		pos;				// 位置
-	D3DXVECTOR3		spaen_pos;			// 出現位置
-	D3DXVECTOR3		rand_pos;			// 発射位置
-	EFFECT_TEX		tex;				// テクスチャ情報
-	BLENDMODE		blend;				// ブレンドモード
-	float			fLength;			// 対角線の長さ
-	float			fAngele;			// 対角線の角度
-	SFluctFloat		randRadius;			// 半径
-	SFluctFloat		width;				// 幅
-	SFluctFloat		height;				// 高さ
-	SFluctInt		randLife;			// 寿命
+	D3DXVECTOR3 pos;		// 位置
+	D3DXVECTOR3 spaen_pos;	// 出現位置
+	D3DXVECTOR3 rand_pos;	// 発射位置
+	EFFECT_TEX tex;			// テクスチャ情報
+	float fLength;			// 対角線の長さ
+	float fAngele;			// 対角線の角度
+	SFluctFloat randRadius;	// 半径
+	SFluctFloat width;		// 幅
+	SFluctFloat height;		// 高さ
+	SFluctInt randLife;		// 寿命
 
 	// 射出系統変数
-	INJECTIONMODE	Injection;			// 射出モード
-	D3DXVECTOR3		shotAngle;			// 射出角度
-	SFluctFloat		shotAngleX;			// 射出角度(X)
-	SFluctFloat		shotAngleY;			// 射出角度(Y)
-	SFluctFloat		shotAngleZ;			// 射出角度(Z)
+	INJECTIONMODE Injection;	// 射出モード
+	D3DXVECTOR3 shotAngle;		// 射出角度
+	SFluctFloat shotAngleX;		// 射出角度(X)
+	SFluctFloat shotAngleY;		// 射出角度(Y)
+	SFluctFloat shotAngleZ;		// 射出角度(Z)
 
 	// 向き系統変数
-	D3DXVECTOR3		rot;				// 向き
-	SFluctFloat		rotX;				// Xの向き
-	SFluctFloat		rotY;				// Yの向き
-	SFluctFloat		rotZ;				// Zの向き
+	D3DXVECTOR3		rot;	// 向き
+	SFluctFloat		rotX;	// Xの向き
+	SFluctFloat		rotY;	// Yの向き
+	SFluctFloat		rotZ;	// Zの向き
 	
 	// 移動系統変数
-	float			fGravity;			// 重力
-	D3DXVECTOR3		move;				// 移動量
-	SFluctFloat		randSpeed;			// 移動速度
-	
+	float fGravity;			// 重力
+	D3DXVECTOR3 move;		// 移動量
+	SFluctFloat speedX;		// 移動速度(X軸)
+	SFluctFloat speedY;		// 移動速度(Y軸)
+	SFluctFloat speedZ;		// 移動速度(Z軸)
+
 	// 色系統変数
-	D3DXCOLOR		col;				// 頂点カラー
-	SFluctFloat		colR;				// r値
-	SFluctFloat		colG;				// g値
-	SFluctFloat		colB;				// b値
-	SFluctFloat		colA;				// a値
+	D3DXCOLOR col;		// 頂点カラー
+	SFluctFloat colR;	// r値
+	SFluctFloat colG;	// g値
+	SFluctFloat colB;	// b値
+	SFluctFloat colA;	// a値
 
 	// 死亡時系統変数
-	EFFECT_DIED		died;				// 死亡条件
-	EFFECT_ON_DIED	onDied;				// 死亡時
+	EFFECT_DIED died;		// 死亡条件
+	EFFECT_ON_DIED onDied;	// 死亡時
 
-	int				nPopCnt;			// 一度に出すエフェクト数
-	int				nCountParticle;		// パーティクルの発生カウント
-	bool			bUse;				// 使用しているか
+
+	// アニメーション系統変数
+	int nCntAnim;		// アニメーションカウンター
+	int nPatternAnim;	// 何個目のアニメーションか
+	int nDivisionU;		// アニメーションの分割数(U)
+	int nDivisionV;		// アニメーションの分割数(V)
+	int nDivisionMAX;	// アニメーションの総分割数
+
+	int nPopCnt;			// 一度に出すエフェクト数
+	int nCountParticle;		// パーティクルの発生カウント
+	bool bUse;				// 使用しているか
+	
+	// 機能のON/OFF
+	bool bIsBillboard;
+	BLENDMODE blend;	// ブレンドモード
 
 	//3D時使用
-	D3DXMATRIX mtxWorld;// ワールドマトリックス
+	D3DXMATRIX mtxWorld;	// ワールドマトリックス
 }Effect;
 
 //------------------------------------

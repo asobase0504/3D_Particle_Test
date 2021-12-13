@@ -94,15 +94,39 @@ void SaveEffect(Effect* effect)
 		fprintf(pFile, "end\n\n");
 
 		// à⁄ìÆë¨ìx
-		fprintf(pFile, "Speed\n");
-		fprintf(pFile, "nValue = %f\n", effect->randSpeed.fValue);
-		if (effect->randSpeed.initial.bIsRandom)
+		fprintf(pFile, "Speed_X\n");
+		fprintf(pFile, "nValue = %f\n", effect->speedX.fValue);
+		if (effect->speedX.initial.bIsRandom)
 		{
-			fprintf(pFile, "InitialRand = %f %f\n", effect->randSpeed.initial.fMax, effect->randSpeed.initial.fMin);
+			fprintf(pFile, "InitialRand = %f %f\n", effect->speedX.initial.fMax, effect->speedX.initial.fMin);
 		}
-		if (effect->randSpeed.Add.bIsRandom)
+		if (effect->speedX.Add.bIsRandom)
 		{
-			fprintf(pFile, "AddRand = %f %f\n", effect->randSpeed.Add.fMax, effect->randSpeed.Add.fMin);
+			fprintf(pFile, "AddRand = %f %f\n", effect->speedX.Add.fMax, effect->speedX.Add.fMin);
+		}
+		fprintf(pFile, "end\n\n");
+
+		fprintf(pFile, "Speed_Y\n");
+		fprintf(pFile, "nValue = %f\n", effect->speedY.fValue);
+		if (effect->speedY.initial.bIsRandom)
+		{
+			fprintf(pFile, "InitialRand = %f %f\n", effect->speedY.initial.fMax, effect->speedY.initial.fMin);
+		}
+		if (effect->speedY.Add.bIsRandom)
+		{
+			fprintf(pFile, "AddRand = %f %f\n", effect->speedY.Add.fMax, effect->speedY.Add.fMin);
+		}
+		fprintf(pFile, "end\n\n");
+
+		fprintf(pFile, "Speed_Z\n");
+		fprintf(pFile, "nValue = %f\n", effect->speedZ.fValue);
+		if (effect->speedZ.initial.bIsRandom)
+		{
+			fprintf(pFile, "InitialRand = %f %f\n", effect->speedZ.initial.fMax, effect->speedZ.initial.fMin);
+		}
+		if (effect->speedZ.Add.bIsRandom)
+		{
+			fprintf(pFile, "AddRand = %f %f\n", effect->speedZ.Add.fMax, effect->speedZ.Add.fMin);
 		}
 		fprintf(pFile, "end\n\n");
 
@@ -146,6 +170,16 @@ void SaveEffect(Effect* effect)
 		// èdóÕ
 		fprintf(pFile, "gravity\n");
 		fprintf(pFile, "nValue = %f\n", effect->fGravity);
+		fprintf(pFile, "end\n\n");
+
+		// ï™äÑêî
+		fprintf(pFile, "DivisionU\n");
+		fprintf(pFile, "nValue = %d\n", effect->nDivisionU);
+		fprintf(pFile, "end\n\n");
+
+		// ï™äÑêî
+		fprintf(pFile, "DivisionV\n");
+		fprintf(pFile, "nValue = %d\n", effect->nDivisionV);
 		fprintf(pFile, "end\n\n");
 
 		// èIóπ

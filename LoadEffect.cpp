@@ -251,7 +251,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 				}
 			}
 		}
-		else if (strcmp(&read[0], "Speed") == 0)
+		else if (strcmp(&read[0], "Speed_X") == 0)
 		{
 			while (1)
 			{
@@ -259,21 +259,81 @@ Effect LoadEffect(EFFECT_TYPE type)
 				if (strcmp(&read[0], "nValue") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randSpeed.fValue);
+					fscanf(pFile, "%f", &effect.speedX.fValue);
 				}
 				else if (strcmp(&read[0], "InitialRand") == 0)
 				{
-					effect.randSpeed.initial.bIsRandom = true;
+					effect.speedX.initial.bIsRandom = true;
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randSpeed.initial.fMax);
-					fscanf(pFile, "%f", &effect.randSpeed.initial.fMin);
+					fscanf(pFile, "%f", &effect.speedX.initial.fMax);
+					fscanf(pFile, "%f", &effect.speedX.initial.fMin);
 				}
 				else if (strcmp(&read[0], "AddRand") == 0)
 				{
-					effect.randSpeed.Add.bIsRandom = true;
+					effect.speedX.Add.bIsRandom = true;
 					fscanf(pFile, "%s", &read);					// = の除去
-					fscanf(pFile, "%f", &effect.randSpeed.Add.fMax);
-					fscanf(pFile, "%f", &effect.randSpeed.Add.fMin);
+					fscanf(pFile, "%f", &effect.speedX.Add.fMax);
+					fscanf(pFile, "%f", &effect.speedX.Add.fMin);
+				}
+				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+				{
+					break;
+				}
+			}
+		}
+		else if (strcmp(&read[0], "Speed_Y") == 0)
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", &read);
+				if (strcmp(&read[0], "nValue") == 0)
+				{
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.speedY.fValue);
+				}
+				else if (strcmp(&read[0], "InitialRand") == 0)
+				{
+					effect.speedY.initial.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.speedY.initial.fMax);
+					fscanf(pFile, "%f", &effect.speedY.initial.fMin);
+				}
+				else if (strcmp(&read[0], "AddRand") == 0)
+				{
+					effect.speedY.Add.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.speedY.Add.fMax);
+					fscanf(pFile, "%f", &effect.speedY.Add.fMin);
+				}
+				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+				{
+					break;
+				}
+			}
+		}
+		else if (strcmp(&read[0], "Speed_Z") == 0)
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", &read);
+				if (strcmp(&read[0], "nValue") == 0)
+				{
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.speedZ.fValue);
+				}
+				else if (strcmp(&read[0], "InitialRand") == 0)
+				{
+					effect.speedZ.initial.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.speedZ.initial.fMax);
+					fscanf(pFile, "%f", &effect.speedZ.initial.fMin);
+				}
+				else if (strcmp(&read[0], "AddRand") == 0)
+				{
+					effect.speedZ.Add.bIsRandom = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.speedZ.Add.fMax);
+					fscanf(pFile, "%f", &effect.speedZ.Add.fMin);
 				}
 				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
 				{
@@ -393,6 +453,32 @@ Effect LoadEffect(EFFECT_TYPE type)
 				{
 					break;
 				}
+			}
+		}
+		else if (strcmp(&read[0], "DivisionU") == 0)
+		{
+			fscanf(pFile, "%s", &read);
+			if (strcmp(&read[0], "nValue") == 0)
+			{
+				fscanf(pFile, "%s", &read);					// = の除去
+				fscanf(pFile, "%d", &effect.nDivisionU);
+			}
+			else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+			{
+				break;
+			}
+		}
+		else if (strcmp(&read[0], "DivisionV") == 0)
+		{
+			fscanf(pFile, "%s", &read);
+			if (strcmp(&read[0], "nValue") == 0)
+			{
+				fscanf(pFile, "%s", &read);					// = の除去
+				fscanf(pFile, "%d", &effect.nDivisionV);
+			}
+			else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+			{
+				break;
 			}
 		}
 		else if (strcmp(&read[0], "FileEnd") == 0)
