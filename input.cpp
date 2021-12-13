@@ -92,12 +92,11 @@ void UninitKeyboard(void)
 void UpdateKeyboard(void)
 {
 	BYTE aKeyState[NUM_KEY_MAX];	// キーボードの入力情報
-	int nCntKey;
 
 	// 入力デバイスからデータを取得
 	if (SUCCEEDED(s_pDevKeyboard->GetDeviceState(sizeof(aKeyState), &aKeyState[0])))
 	{
-		for (nCntKey = 0; nCntKey < NUM_KEY_MAX; nCntKey++)
+		for (int nCntKey = 0; nCntKey < NUM_KEY_MAX; nCntKey++)
 		{
 			s_akeyStateTrigger[nCntKey] = ~s_aKeyState[nCntKey] & aKeyState[nCntKey];
 			s_akeyStateRelese[nCntKey] = s_aKeyState[nCntKey] & ~aKeyState[nCntKey];
@@ -115,7 +114,7 @@ void UpdateKeyboard(void)
 //====================================
 bool GetKeyboardPress(int nKey)
 {
-	return (s_aKeyState[nKey] & 0x80) ? true : false;
+	return (s_aKeyState[nKey] & 0x80) != 0;
 }
 
 //====================================
@@ -123,7 +122,7 @@ bool GetKeyboardPress(int nKey)
 //====================================
 bool GetKeyboardTrigger(int nKey)
 {
-	return (s_akeyStateTrigger[nKey] & 0x80) ? true : false;
+	return (s_akeyStateTrigger[nKey] & 0x80) != 0;
 }
 
 //====================================
@@ -131,7 +130,7 @@ bool GetKeyboardTrigger(int nKey)
 //====================================
 bool GetKeyboardRelease(int nKey)
 {
-	return (s_akeyStateRelese[nKey] & 0x80) ? true : false;
+	return (s_akeyStateRelese[nKey] & 0x80) != 0;
 }
 
 //====================================
@@ -156,6 +155,7 @@ HRESULT InitJoypad(void)
 
 	// 使用状況の初期化
 	s_bUseJoyPad = false;
+
 	return S_OK;
 }
 
@@ -181,6 +181,7 @@ void UpdateJoypad(void)
 		s_joykeyStateTrigger.Gamepad.wButtons = ~s_joyKeyState.Gamepad.wButtons & joykeyState.Gamepad.wButtons;
 		s_joykeyStateRelese.Gamepad.wButtons = s_joyKeyState.Gamepad.wButtons & ~joykeyState.Gamepad.wButtons;
 		s_joyKeyState = joykeyState;	// ジョイパッドのプレス情報を保存
+
 		// 使用状況の更新
 		s_bUseJoyPad = true;
 	}
@@ -189,7 +190,6 @@ void UpdateJoypad(void)
 		// 使用状況の更新
 		s_bUseJoyPad = false;
 	}
-
 }
 
 //====================================
@@ -197,7 +197,7 @@ void UpdateJoypad(void)
 //====================================
 bool GetJoypadPress(JOYKEY key)
 {
-	return(s_joyKeyState.Gamepad.wButtons & (0x01 << key)) ? true : false;
+	return (s_joyKeyState.Gamepad.wButtons & (0x01 << key)) != 0;
 }
 
 //====================================
@@ -205,7 +205,7 @@ bool GetJoypadPress(JOYKEY key)
 //====================================
 bool GetJoypadTrigger(JOYKEY key)
 {
-	return(s_joykeyStateTrigger.Gamepad.wButtons & (0x01 << key)) ? true : false;
+	return (s_joykeyStateTrigger.Gamepad.wButtons & (0x01 << key)) != 0;
 }
 
 //====================================

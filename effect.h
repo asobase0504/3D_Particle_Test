@@ -20,6 +20,7 @@ typedef enum
 {
 	TEST_TYPE_EFFECT = 0,
 	TYPE01_EFFECT,
+	TYPE02_EFFECT,
 	MAX_TYPE_EFFECT
 }EFFECT_TYPE;
 
@@ -179,9 +180,9 @@ typedef struct
 	SFluctFloat colA;	// a値
 
 	// 死亡時系統変数
-	EFFECT_DIED died;		// 死亡条件
-	EFFECT_ON_DIED onDied;	// 死亡時
-
+	EFFECT_DIED died;			// 死亡条件
+	EFFECT_ON_DIED onDied;		// 死亡時
+	EFFECT_TYPE onDiedPopType;	// ON_DIED_POP時に描画されるエフェクトType
 
 	// アニメーション系統変数
 	int nCntAnim;		// アニメーションカウンター

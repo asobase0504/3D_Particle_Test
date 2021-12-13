@@ -31,6 +31,7 @@ static const char* pFilename[] =
 {
 	"data/FILE/TestParticle.txt",
 	"data/FILE/Particle2.txt",
+	"data/FILE/Particle3.txt",
 };
 // PFile と TYPEEFFECT の数をチェック
 static_assert((sizeof(pFilename) / sizeof(pFilename[0])) == MAX_TYPE_EFFECT, "error ファイルの数と列挙型の数が一致してません");
@@ -537,6 +538,20 @@ Effect LoadEffect(EFFECT_TYPE type)
 		else if (strcmp(&read[0], "Culling") == 0)
 		{
 			effect.bIsCulling = true;
+		}
+		else if (strcmp(&read[0], "ON_DIED_POP") == 0)
+		{
+			effect.onDied = ON_DIED_POP;
+			fscanf(pFile, "%s", &read);
+			if (strcmp(&read[0], "nType") == 0)
+			{
+				fscanf(pFile, "%s", &read);					// = の除去
+				fscanf(pFile, "%d", &effect.onDiedPopType);
+			}
+			else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+			{
+				break;
+			}
 		}
 		else if (strcmp(&read[0], "FileEnd") == 0)
 		{

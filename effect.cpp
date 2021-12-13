@@ -89,8 +89,6 @@ void InitEffect(void)
 	// エフェクトの情報を初期化
 	ZeroMemory(s_aEffect, sizeof(s_aEffect));
 
-	Effect* pEffect;	// エフェクトのポインタ型
-
 	// 頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_EFFECT,		// 確保するバッファサイズ
 		D3DUSAGE_WRITEONLY,
@@ -98,6 +96,8 @@ void InitEffect(void)
 		D3DPOOL_MANAGED,
 		&s_pVtxBuff,
 		NULL);
+
+	Effect* pEffect = NULL;	// エフェクトのポインタ型
 
 	// 頂点情報へのポインタを生成
 	VERTEX_3D *pVtx;
@@ -182,7 +182,7 @@ void UninitEffect(void)
 //********************************************************************************
 void UpdateEffect(void)
 {
-	Effect* pEffect;
+	Effect* pEffect = NULL;
 	for (int i = 0; i < MAX_EFFECT; i++)
 	{
 		pEffect = &(s_aEffect[i]);
@@ -395,9 +395,20 @@ bool DiedCriteriaEffect(Effect* effect)
 //********************************************************************************
 // エフェクトの死亡処理
 //********************************************************************************
-void DiedEffect(Effect * effect)
+void DiedEffect(Effect* effect)
 {
-
+	switch (effect->onDied)
+	{
+	case ON_DIED_NONE:
+		break;
+	case ON_DIED_POP:
+		SetEffect(effect->pos, effect->onDiedPopType);
+		break;
+	case MAX_ON_DIED:
+	default:
+		assert(false);
+		break;
+	}
 }
 
 //********************************************************************************
@@ -457,7 +468,6 @@ void DrawEffect(void)
 		// カリングの設定
 		if (pEffect->bIsCulling)
 		{
-			
 			pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 		}
 		
@@ -546,12 +556,12 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->colG.initial, &pEffect->colG.fValue);				// Greenの出現時の数値
 		SetRandom(&pEffect->colB.initial, &pEffect->colB.fValue);				// Blueの出現時の数値
 		SetRandom(&pEffect->colA.initial, &pEffect->colA.fValue);				// Alphaの出現時の数値
-		SetRandom(&pEffect->speedX.initial, &(pEffect->speedX.fValue));			// 移動量(X軸)
-		SetRandom(&pEffect->speedY.initial, &(pEffect->speedY.fValue));			// 移動量(Y軸)
-		SetRandom(&pEffect->speedZ.initial, &(pEffect->speedZ.fValue));			// 移動量(Z軸)
-		SetRandom(&pEffect->randLife.initial, &(pEffect->randLife.nValue));		// 寿命
-		SetRandom(&pEffect->width.initial, &(pEffect->width.fValue));			// 幅
-		SetRandom(&pEffect->height.initial, &(pEffect->height.fValue));			// 高さ
+		SetRandom(&pEffect->speedX.initial, &pEffect->speedX.fValue);			// 移動量(X軸)
+		SetRandom(&pEffect->speedY.initial, &pEffect->speedY.fValue);			// 移動量(Y軸)
+		SetRandom(&pEffect->speedZ.initial, &pEffect->speedZ.fValue);			// 移動量(Z軸)
+		SetRandom(&pEffect->randLife.initial, &pEffect->randLife.nValue);		// 寿命
+		SetRandom(&pEffect->width.initial, &pEffect->width.fValue);				// 幅
+		SetRandom(&pEffect->height.initial, &pEffect->height.fValue);			// 高さ
 		SetRandom(&pEffect->shotAngleX.initial, &(pEffect->shotAngleX.fValue));	// 発射角度(X軸)
 		SetRandom(&pEffect->shotAngleY.initial, &(pEffect->shotAngleY.fValue));	// 発射角度(Y軸)
 		SetRandom(&pEffect->shotAngleZ.initial, &(pEffect->shotAngleZ.fValue));	// 発射角度(Z軸)
@@ -560,15 +570,15 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->colG.Add, &pEffect->colG.fAddValue);				// Greenの出現時の数値
 		SetRandom(&pEffect->colB.Add, &pEffect->colB.fAddValue);				// Blueの出現時の数値
 		SetRandom(&pEffect->colA.Add, &pEffect->colA.fAddValue);				// Alphaの出現時の数値
-		SetRandom(&pEffect->speedX.Add, &(pEffect->speedX.fAddValue));			// 移動量(X軸)
-		SetRandom(&pEffect->speedY.Add, &(pEffect->speedY.fAddValue));			// 移動量(Y軸)
-		SetRandom(&pEffect->speedZ.Add, &(pEffect->speedZ.fAddValue));			// 移動量(Z軸)
-		SetRandom(&pEffect->width.Add, &(pEffect->width.fAddValue));			// 幅
-		SetRandom(&pEffect->height.Add, &(pEffect->height.fAddValue));			// 高さ
-		SetRandom(&pEffect->randLife.Add, &(pEffect->randLife.nValue));			// 寿命
-		SetRandom(&pEffect->shotAngleX.Add, &(pEffect->shotAngleX.fAddValue));	// 発射角度(X軸)
-		SetRandom(&pEffect->shotAngleY.Add, &(pEffect->shotAngleY.fAddValue));	// 発射角度(Y軸)
-		SetRandom(&pEffect->shotAngleZ.Add, &(pEffect->shotAngleZ.fAddValue));	// 発射角度(Z軸)
+		SetRandom(&pEffect->speedX.Add, &pEffect->speedX.fAddValue);			// 移動量(X軸)
+		SetRandom(&pEffect->speedY.Add, &pEffect->speedY.fAddValue);			// 移動量(Y軸)
+		SetRandom(&pEffect->speedZ.Add, &pEffect->speedZ.fAddValue);			// 移動量(Z軸)
+		SetRandom(&pEffect->width.Add, &pEffect->width.fAddValue);				// 幅
+		SetRandom(&pEffect->height.Add, &pEffect->height.fAddValue);			// 高さ
+		SetRandom(&pEffect->randLife.Add, &pEffect->randLife.nValue);			// 寿命
+		SetRandom(&pEffect->shotAngleX.Add, &pEffect->shotAngleX.fAddValue);	// 発射角度(X軸)
+		SetRandom(&pEffect->shotAngleY.Add, &pEffect->shotAngleY.fAddValue);	// 発射角度(Y軸)
+		SetRandom(&pEffect->shotAngleZ.Add, &pEffect->shotAngleZ.fAddValue);	// 発射角度(Z軸)
 
 		pEffect->nDivisionU = 1;
 		pEffect->nDivisionV = 1;
@@ -687,6 +697,6 @@ void SetRandom(FRandInt* fluct, int* nValue)
 {
 	if (fluct->bIsRandom)	// 乱数が使用されている
 	{
-		*nValue = (rand() / RAND_MAX) * (fluct->nMax - fluct->nMin) + fluct->nMin;
+		*nValue = (int)((rand() / (float)RAND_MAX) * (fluct->nMax - fluct->nMin)) + fluct->nMin;
 	}
 }

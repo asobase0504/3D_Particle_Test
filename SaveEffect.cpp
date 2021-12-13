@@ -8,7 +8,7 @@ void SaveEffect(Effect* effect)
 	FILE * pFile;
 
 	//ファイルを開く
-	pFile = fopen("data/FILE/Particle2.txt", "w");
+	pFile = fopen("data/FILE/Particle3.txt", "w");
 
 	if (pFile != NULL)
 	{// ファイルが開いた場合
@@ -210,6 +210,14 @@ void SaveEffect(Effect* effect)
 		if (effect->bIsCulling)
 		{
 			fprintf(pFile, "Culling\n");
+			fprintf(pFile, "end\n\n");
+		}
+
+		// 死亡時
+		if (effect->onDied == ON_DIED_POP)
+		{
+			fprintf(pFile, "ON_DIED_POP\n");
+			fprintf(pFile, "nType = %d\n", effect->onDiedPopType);
 			fprintf(pFile, "end\n\n");
 		}
 

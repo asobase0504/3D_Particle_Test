@@ -6,6 +6,7 @@ end
 
 ColRed
 nValue = 1.000000
+InitRand = 1.0 0.0
 end
 
 ColBlue
@@ -74,6 +75,5 @@ end
 
 Culling
 end
-
 
 FileEnd
