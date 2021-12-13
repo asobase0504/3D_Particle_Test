@@ -18,26 +18,28 @@ end
 
 Width
 nValue = 0.000000
+AddRand = 1.5 1.5
 end
 
 Height
-nValue = 5.000000
+nValue = 0.000000
+AddRand = 1.5 1.5
 end
 
 Life
-nValue = 50
+nValue = 10
 end
 
 Speed_X
-nValue = 2.000000
+nValue = 0.000000
 end
 
 Speed_Y
-nValue = 2.000000
+nValue = 0.000000
 end
 
 Speed_Z
-nValue = 2.000000
+nValue = 0.000000
 end
 
 Aangle_X
@@ -49,16 +51,19 @@ nValue = 0.000000
 end
 
 Aangle_Z
-nValue = 4.392968
+nValue = 0.300077
 InitialRand = 6.283185 0.017453
 end
 
 gravity
-nValue = 0.001000
+nValue = 0.000000
 end
 
 DivisionU
 nValue = 0
+end
+
+Culling
 end
 
 DivisionV

@@ -30,7 +30,7 @@
 static const char* pFilename[] =
 {
 	"data/FILE/TestParticle.txt",
-	"data/FILE/Particle.txt",
+	"data/FILE/Particle2.txt",
 };
 // PFile と TYPEEFFECT の数をチェック
 static_assert((sizeof(pFilename) / sizeof(pFilename[0])) == MAX_TYPE_EFFECT, "error ファイルの数と列挙型の数が一致してません");
@@ -510,6 +510,14 @@ Effect LoadEffect(EFFECT_TYPE type)
 			{
 				break;
 			}
+		}
+		else if (strcmp(&read[0], "Billboard") == 0)
+		{
+			effect.bIsBillboard = true;
+		}
+		else if (strcmp(&read[0], "Culling") == 0)
+		{
+			effect.bIsCulling = true;
 		}
 		else if (strcmp(&read[0], "FileEnd") == 0)
 		{

@@ -190,11 +190,24 @@ void SaveEffect(Effect* effect)
 		fprintf(pFile, "nValue = %d\n", effect->nDivisionU);
 		fprintf(pFile, "end\n\n");
 
+		// ビルボード
+		if (effect->bIsBillboard)
+		{
+			fprintf(pFile, "Billboard\n");
+			fprintf(pFile, "end\n\n");
+		}
+
+		// カリング
+		if (effect->bIsCulling)
+		{
+			fprintf(pFile, "Culling\n");
+			fprintf(pFile, "end\n\n");
+		}
+
 		// 分割数
 		fprintf(pFile, "DivisionV\n");
 		fprintf(pFile, "nValue = %d\n", effect->nDivisionV);
 		fprintf(pFile, "end\n\n");
-
 		// 終了
 		fprintf(pFile, "\nFileEnd\n");
 		//ファイルを閉じる

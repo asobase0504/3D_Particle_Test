@@ -455,7 +455,11 @@ void DrawEffect(void)
 		pDevice->SetRenderState(D3DRS_ZENABLE, false);
 
 		// カリングの設定
-		pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		if (pEffect->bIsCulling)
+		{
+			
+			pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		}
 		
 		// アルファテストを有効
 		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, true);

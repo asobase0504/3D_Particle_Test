@@ -190,7 +190,8 @@ typedef struct
 	bool bUse;				// 使用しているか
 	
 	// 機能のON/OFF
-	bool bIsBillboard;
+	bool bIsBillboard;	// ビルボードの使用
+	bool bIsCulling;	// カリングの使用
 	BLENDMODE blend;	// ブレンドモード
 
 	//3D時使用
