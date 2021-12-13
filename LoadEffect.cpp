@@ -71,6 +71,25 @@ Effect LoadEffect(EFFECT_TYPE type)
 			fscanf(pFile, "%d", &effect.tex);	// 値を入れる
 
 		}
+		else if (strcmp(&read[0], "posLag") == 0)
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", &read);
+				if (strcmp(&read[0], "nValue") == 0)
+				{
+					effect.bIsPosRand = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%f", &effect.posRand.x);		// 値を入れる
+					fscanf(pFile, "%f", &effect.posRand.y);		// 値を入れる
+					fscanf(pFile, "%f", &effect.posRand.z);		// 値を入れる
+				}
+				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+				{
+					break;
+				}
+			}
+		}
 		else if (strcmp(&read[0], "ColRed") == 0)
 		{
 			while (1)

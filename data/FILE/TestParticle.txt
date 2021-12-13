@@ -1,13 +1,21 @@
-TEXTURE = 2
+TEXTURE = 3
+
+posLag
+nValue = 10.000000 10.000000 0.000000
+end
+
 ColRed
 nValue = 1.000000
 end
+
 ColBlue
 nValue = 1.000000
 end
+
 ColGreen
 nValue = 1.000000
 end
+
 ColAlpha
 nValue = 1.000000
 end
@@ -46,6 +54,9 @@ nValue = 0.001000
 end
 
 Culling
+end
+
+Billboard
 end
 
 FileEnd

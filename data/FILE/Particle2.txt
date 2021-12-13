@@ -1,4 +1,8 @@
-TEXTURE = 2
+TEXTURE = 3
+
+posLag
+nValue = 10.000000 10.000000 0.000000
+end
 
 ColRed
 nValue = 1.000000
@@ -17,29 +21,27 @@ nValue = 1.000000
 end
 
 Width
-nValue = 0.000000
-AddRand = 1.5 1.5
+nValue = 5.000000
 end
 
 Height
-nValue = 0.000000
-AddRand = 1.5 1.5
+nValue = 5.000000
 end
 
 Life
-nValue = 10
+nValue = 50
 end
 
 Speed_X
-nValue = 0.000000
+nValue = 2.000000
 end
 
 Speed_Y
-nValue = 0.000000
+nValue = 2.000000
 end
 
 Speed_Z
-nValue = 0.000000
+nValue = 2.000000
 end
 
 Aangle_X
@@ -51,23 +53,26 @@ nValue = 0.000000
 end
 
 Aangle_Z
-nValue = 0.300077
+nValue = 6.074945
 InitialRand = 6.283185 0.017453
 end
 
 gravity
-nValue = 0.000000
+nValue = 0.001000
 end
 
 DivisionU
 nValue = 0
 end
 
-Culling
-end
-
 DivisionV
 nValue = 0
+end
+
+Billboard
+end
+
+Culling
 end
 
 

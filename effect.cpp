@@ -337,7 +337,7 @@ void MoveEffect(Effect * effect)
 	if (effect->Injection == PARTICLMODE_CONVERGENCE)	// 収縮
 	{
 		float fRotMove, fRotDest, fRotDiff;
-		D3DXVECTOR3 PosDifference = D3DXVECTOR3(effect->spaen_pos.x - effect->pos.x, effect->spaen_pos.y - effect->pos.y, 0.0f);
+		D3DXVECTOR3 PosDifference = D3DXVECTOR3(effect->posCenter.x - effect->pos.x, effect->posCenter.y - effect->pos.y, 0.0f);
 
 		fRotMove = atan2f(effect->move.x, effect->move.y);		// 現在の移動方向(角度)
 		fRotDest = atan2f(PosDifference.x, PosDifference.y);	// 目的の移動方向
@@ -532,9 +532,16 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		*pEffect = *GetParticle();
 #endif																	
 
+		pEffect->posCenter = pos;	// スポーン位置
 		pEffect->pos = pos;			// 位置
-		pEffect->spaen_pos = pos;	// スポーン位置
-
+		// 位置を少しずらす
+		if (pEffect->bIsPosRand)
+		{
+			pEffect->pos.x += rand() % (int)(pEffect->posRand.x + 1) - pEffect->posRand.x;
+			pEffect->pos.y += rand() % (int)(pEffect->posRand.y + 1) - pEffect->posRand.y;
+			pEffect->pos.z += rand() % (int)(pEffect->posRand.z + 1) - pEffect->posRand.z;
+		}
+											   
 		SetRandom(&pEffect->colR.initial, &pEffect->colR.fValue);				// Redの出現時の数値
 		SetRandom(&pEffect->colG.initial, &pEffect->colG.fValue);				// Greenの出現時の数値
 		SetRandom(&pEffect->colB.initial, &pEffect->colB.fValue);				// Blueの出現時の数値

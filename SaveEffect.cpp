@@ -16,6 +16,11 @@ void SaveEffect(Effect* effect)
 	 // Redカラー
 		fprintf(pFile, "TEXTURE = %d\n\n", (int)effect->tex);
 
+		// セット時のPosのずれ
+		fprintf(pFile, "posLag\n");
+		fprintf(pFile, "nValue = %f %f %f\n", effect->posRand.x, effect->posRand.y, effect->posRand.z);
+		fprintf(pFile, "end\n\n");
+
 		fprintf(pFile, "ColRed\n");
 		fprintf(pFile, "nValue = %f\n", effect->colR.fValue);
 		if (effect->colR.initial.bIsRandom)
@@ -189,6 +194,10 @@ void SaveEffect(Effect* effect)
 		fprintf(pFile, "DivisionU\n");
 		fprintf(pFile, "nValue = %d\n", effect->nDivisionU);
 		fprintf(pFile, "end\n\n");
+		// 分割数
+		fprintf(pFile, "DivisionV\n");
+		fprintf(pFile, "nValue = %d\n", effect->nDivisionV);
+		fprintf(pFile, "end\n\n");
 
 		// ビルボード
 		if (effect->bIsBillboard)
@@ -204,10 +213,6 @@ void SaveEffect(Effect* effect)
 			fprintf(pFile, "end\n\n");
 		}
 
-		// 分割数
-		fprintf(pFile, "DivisionV\n");
-		fprintf(pFile, "nValue = %d\n", effect->nDivisionV);
-		fprintf(pFile, "end\n\n");
 		// 終了
 		fprintf(pFile, "\nFileEnd\n");
 		//ファイルを閉じる

@@ -136,15 +136,20 @@ typedef struct
 //------------------------------------
 typedef struct
 {
-	D3DXVECTOR3 pos;		// 位置
-	D3DXVECTOR3 spaen_pos;	// 出現位置
-	D3DXVECTOR3 rand_pos;	// 発射位置
 	EFFECT_TEX tex;			// テクスチャ情報
-	float fLength;			// 対角線の長さ
-	float fAngele;			// 対角線の角度
+	SFluctInt randLife;		// 寿命
+
+	// 位置系統変数
+	D3DXVECTOR3 pos;		// 位置
+	D3DXVECTOR3 posCenter;	// 中心位置
+	D3DXVECTOR3 posRand;	// 出現位置のずらす値
+	bool bIsPosRand;		// 出現位置をずらす
+
+	// 大きさ系統変数
 	SFluctFloat width;		// 幅
 	SFluctFloat height;		// 高さ
-	SFluctInt randLife;		// 寿命
+	float fLength;			// 対角線の長さ
+	float fAngele;			// 対角線の角度
 
 	// 射出系統変数
 	INJECTIONMODE Injection;	// 射出モード
