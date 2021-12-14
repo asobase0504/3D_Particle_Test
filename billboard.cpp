@@ -21,10 +21,10 @@
 //------------------------------------
 typedef struct
 {
-	D3DXVECTOR3 pos;	// 頂点座標
-	D3DXVECTOR3 rot;	// 回転座標
-	bool bUse;			// 使用状況
-	D3DXMATRIX mtxWorld;// ワールドマトリックス
+	D3DXVECTOR3 pos;		// 頂点座標
+	D3DXVECTOR3 rot;		// 回転座標
+	bool bUse;				// 使用状況
+	D3DXMATRIX mtxWorld;	// ワールドマトリックス
 } Billboard;
 
 //------------------------------------
