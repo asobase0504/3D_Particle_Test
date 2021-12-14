@@ -8,23 +8,21 @@
 // include
 //-----------------------------------------
 #include "main.h"
-#include "setup.h"
+#include "common.h"
 
 //=========================================
 // Šp“x‚Ì³‹K‰»
 //=========================================
-float NormalizeRot(float rot)
+void NormalizeRot(float* rot)
 {
-	if (rot > D3DX_PI)
+	if (*rot > D3DX_PI)
 	{
-		rot -= D3DX_PI * 2;
+		*rot -= D3DX_PI * 2;
 	}
-	if (rot < -D3DX_PI)
+	if (*rot < -D3DX_PI)
 	{
-		rot += D3DX_PI * 2;
+		*rot += D3DX_PI * 2;
 	}
-
-	return rot;
 }
 
 //=========================================
@@ -57,3 +55,16 @@ void RectAddDraw(LPDIRECT3DDEVICE9 pDevice, LPDIRECT3DTEXTURE9 Texture, int nCnt
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 }
+
+//=========================================
+// ‘ÎŠpü‚Ì’l‚ğZo(’·•ûŒ`)
+//=========================================
+void DiagonalLine(float* Length, float* Angele, float width, float height)
+{
+	// ‘ÎŠpü‚Ì’·‚³‚ğZo‚·‚é
+	*Length = sqrtf((width * width + height * height) / 2.0f);
+	// ‘ÎŠpü‚ÌŠp“x‚ğZo
+	*Angele = atan2f(width, height);
+}
+
+

@@ -9,7 +9,7 @@
 //------------------------------------
 #include "main.h"
 #include "polygon.h"
-#include "setup.h"
+#include "common.h"
 #include "wall.h"
 
 //------------------------------------

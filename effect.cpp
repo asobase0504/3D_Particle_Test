@@ -12,7 +12,7 @@
 #include "spawn_effect.h"
 #include "LoadEffect.h"
 #include "input.h"
-#include "setup.h"
+#include "common.h"
 #include <assert.h>
 #include <time.h>
 
@@ -199,16 +199,19 @@ void UpdateEffect(void)
 
 		pEffect->speedY.fValue -= pEffect->fGravity;	// 重力
 
-		
 		pEffect->pos += pEffect->move;	// 位置の更新
 
-		// 対角線の長さを算出する
-		pEffect->fLength = sqrtf(((pEffect->width.fValue * pEffect->width.fValue) + (pEffect->height.fValue * pEffect->height.fValue)) / 2.0f);
-		// 対角線の角度を算出
-		pEffect->fAngele = atan2f(pEffect->width.fValue, pEffect->height.fValue);
-		
+		// 対角線の長さと角度を算出する
+		DiagonalLine(&pEffect->fLength, &pEffect->fAngele, pEffect->width.fValue, pEffect->height.fValue);
+
+		// 死亡条件の確認後、死亡処理
+		DiedCriteriaEffect(pEffect) ? true : DiedEffect(pEffect);
+
+		// window画面以外に出た場合の処理
+		OffScreenEffect(pEffect);
+
 		// 頂点バッファーの設定
-		VERTEX_3D *pVtx;	// 頂点情報へのポインタを生成
+		VERTEX_3D *pVtx;
 
 		// 頂点バッファをロックし、頂点情報へのポインタを取得
 		s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
@@ -258,15 +261,6 @@ void UpdateEffect(void)
 		// 頂点バッファをアンロック
 		s_pVtxBuff->Unlock();
 
-		// 死亡条件を満たしているかチェック
-		if (!(DiedCriteriaEffect(pEffect)))
-		{
-			// 死亡処理
-			DiedEffect(pEffect);
-		}
-
-		// window画面以外に出た場合の処理
-		OffScreenEffect(pEffect);
 	}
 }
 
@@ -275,10 +269,8 @@ void UpdateEffect(void)
 //********************************************************************************
 void StatChange(Effect * effect)
 {
-	// 対角線の長さを算出する
-	effect->fLength = sqrtf(((effect->width.fValue * effect->width.fValue) + (effect->height.fValue * effect->height.fValue)) / 2.0f);
-	// 対角線の角度を算出
-	effect->fAngele = atan2f(effect->width.fValue, effect->height.fValue);
+	// 対角線の値を算出
+	DiagonalLine(&effect->fLength,&effect->fAngele, effect->width.fValue, effect->height.fValue);
 
 	effect->randLife.nValue--;	// 寿命
 
@@ -307,6 +299,7 @@ void AddStat(SFluctFloat* fluct)
 
 //********************************************************************************
 // 移動処理
+// 引数１　変更するエフェクト
 //********************************************************************************
 void MoveEffect(Effect * effect)
 {
@@ -315,55 +308,22 @@ void MoveEffect(Effect * effect)
 	effect->move.y = tanf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->speedY.fValue;
 	effect->move.z = cosf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->speedZ.fValue;
 
-	//for (int nHeight = 0; nHeight <= s_aMesh[0].nSurfaceHeight; nHeight++)
-	//{
-	//	float fRotHeight = D3DX_PI / s_aMesh[0].nSurfaceHeight;
-	//	float fHeight = cosf(fRotHeight * nHeight) * s_aMesh[0].fLineHeight;
-	//	for (int nWidth = 0; nWidth <= s_aMesh[0].nSurfaceWidth; nWidth++)
-	//	{
-	//		float fRotWidth = 2.0f * D3DX_PI / s_aMesh[0].nSurfaceWidth * nWidth;
-	//		NormalizeRot(fRotWidth);
-
-	//		effect->move.x = cosf(fRotWidth) * sinf(fRotHeight) * effect->speedX.fValue;
-	//		effect->move.y = cosf(fRotHeight) * effect->speedX.fValue;
-	//		effect->move.z = sinf(fRotWidth) * sinf(fRotHeight) * effect->speedX.fValue;
-
-	//		effect->move.x = -sinf((D3DX_PI * nCntParticle / 10) - (s_aParticle[nCntParticle].fAngle / (5 * s_aParticle[nCntParticle].fAttenuation)));
-	//		effect->move.y -= tanf(D3DX_PI) * s_aParticle[nCntParticle].fRadius / 2;
-	//		effect->move.z = -cosf((D3DX_PI * nCntParticle / 10) - (s_aParticle[nCntParticle].fAngle / (5 * s_aParticle[nCntParticle].fAttenuation)));
-	//	}
-	//}
-
 	if (effect->Injection == PARTICLMODE_CONVERGENCE)	// 収縮
 	{
 		float fRotMove, fRotDest, fRotDiff;
-		D3DXVECTOR3 PosDifference = D3DXVECTOR3(effect->posCenter.x - effect->pos.x, effect->posCenter.y - effect->pos.y, 0.0f);
+		D3DXVECTOR3 PosDifference(effect->posCenter.x - effect->pos.x, effect->posCenter.y - effect->pos.y, 0.0f);
 
 		fRotMove = atan2f(effect->move.x, effect->move.y);		// 現在の移動方向(角度)
 		fRotDest = atan2f(PosDifference.x, PosDifference.y);	// 目的の移動方向
 		fRotDiff = fRotDest - fRotMove;							// 目的の移動方向までの差分
 
 		// 角度の正規化
-		if (fRotDiff > D3DX_PI)
-		{// 目的の差分が半円周(+方向)を超える場合
-			fRotDiff -= (D3DX_PI * 2);
-		}
-		else if (fRotDiff < -D3DX_PI)
-		{// 目的の差分が半円周(-方向)を超える場合
-			fRotDiff += (D3DX_PI * 2);
-		}
+		NormalizeRot(&fRotDiff);
 
 		fRotMove += fRotDiff * 1.0f;	// 移動方向(角度)の補正
 
 		// 角度の正規化
-		if (fRotMove > D3DX_PI)
-		{// 移動方向(角度)が半円周(+方向)を超える場合
-			fRotMove -= (D3DX_PI * 2);
-		}
-		else if (fRotMove < -D3DX_PI)
-		{// 移動方向(角度)が半円周(-方向)を超える場合
-			fRotMove += (D3DX_PI * 2);
-		}
+		NormalizeRot(&fRotMove);
 
 		// 位置の更新
 		effect->move.x = sinf(fRotMove) * effect->speedX.fValue;
@@ -382,6 +342,7 @@ void MoveEffect(Effect * effect)
 
 //********************************************************************************
 // 死亡条件処理
+// 引数１　変更するエフェクト
 //********************************************************************************
 bool DiedCriteriaEffect(Effect* effect)
 {
@@ -394,6 +355,7 @@ bool DiedCriteriaEffect(Effect* effect)
 
 //********************************************************************************
 // エフェクトの死亡処理
+// 引数１　変更するエフェクト
 //********************************************************************************
 void DiedEffect(Effect* effect)
 {
@@ -423,15 +385,16 @@ void DrawEffect(void)
 	{
 		// パーティクル情報の取得
 		Effect *pEffect = &(s_aEffect[i]);
+
 		if (!(pEffect->bUse))
 		{
 			continue;
 		}
 		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&pEffect->mtxWorld);	// 行列初期化関数(第1引数の行列を単位行列に初期化)
+
 		D3DXMATRIX mtxView;
 		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
-
 		// カメラの逆行列を設定
 		if (pEffect->bIsBillboard)
 		{
@@ -470,25 +433,28 @@ void DrawEffect(void)
 		{
 			pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 		}
-		
+
 		// アルファテストを有効
 		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, true);
 		pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
-		if (pEffect->blend == BLENDMODE_ADDITION)
+		switch (pEffect->blend)
 		{
+		case BLENDMODE_ADDITION:
 			// αブレンディングを加算合成に設定
 			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);			// ブレンドオペレーション(計算方式)
 			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-		}
-		else if (pEffect->blend == BLENDMODE_SUBTRACT)
-		{
+			break;
+		case BLENDMODE_SUBTRACT:
 			// αブレンディングを減算合成に設定
 			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
 			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			break;
+		default:
+			break;
 		}
 
 		// 描画
@@ -520,6 +486,8 @@ void DrawEffect(void)
 
 //********************************************************************************
 // エフェクトの設定処理
+// 引数１　エフェクトを出現する位置
+// 引数２　エフェクトの種類
 //********************************************************************************
 void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 {
@@ -580,9 +548,6 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->shotAngleY.Add, &pEffect->shotAngleY.fAddValue);	// 発射角度(Y軸)
 		SetRandom(&pEffect->shotAngleZ.Add, &pEffect->shotAngleZ.fAddValue);	// 発射角度(Z軸)
 
-		pEffect->nDivisionU = 1;
-		pEffect->nDivisionV = 1;
-
 		pEffect->nDivisionMAX = pEffect->nDivisionU * pEffect->nDivisionV;	// 分割数の計算
 
 		// 角度の代入
@@ -641,6 +606,7 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 
 //********************************************************************************
 // エフェクトの画面外処理
+// 引数１　変更するエフェクト
 //********************************************************************************
 void OffScreenEffect(Effect* effect)
 {
@@ -658,21 +624,9 @@ void OffScreenEffect(Effect* effect)
 }
 
 //********************************************************************************
-// SFluctFloatの値の読み込み
-//********************************************************************************
-void LoadFluct(FILE** file, SFluctFloat* fluct)
-{
-}
-
-//********************************************************************************
-// SFluctIntの値の読み込み
-//********************************************************************************
-void LoadFluct(FILE* file, SFluctInt* fluct)
-{
-}
-
-//********************************************************************************
 // SRandFloatの初期化
+// 引数１　変更するエフェクト
+// 引数２　値
 //********************************************************************************
 void InitRandom(FRandFloat* inRandomFloat, float fValue)
 {
@@ -681,6 +635,8 @@ void InitRandom(FRandFloat* inRandomFloat, float fValue)
 
 //********************************************************************************
 // SRandFloatの乱数結果を反映
+// 引数１　乱数が設定出来る float型
+// 引数２　値
 //********************************************************************************
 void SetRandom(FRandFloat* fluct,float* fValue)
 {
@@ -692,6 +648,8 @@ void SetRandom(FRandFloat* fluct,float* fValue)
 
 //********************************************************************************
 // SRandIntの乱数結果を反映
+// 引数１　乱数が設定出来る int型
+// 引数２　値
 //********************************************************************************
 void SetRandom(FRandInt* fluct, int* nValue)
 {

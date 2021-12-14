@@ -8,7 +8,7 @@
 // include
 //------------------------------------
 #include "main.h"
-#include "setup.h"
+#include "common.h"
 #include "billboard.h"
 
 //------------------------------------

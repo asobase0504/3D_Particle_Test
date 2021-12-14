@@ -53,6 +53,14 @@ gravity
 nValue = 0.001000
 end
 
+DivisionU
+nValue = 1
+end
+
+DivisionV
+nValue = 1
+end
+
 Culling
 end
 
