@@ -58,7 +58,7 @@ static Effect s_aEffect[MAX_EFFECT];								// エフェクトの情報
 //-----------------------
 static const char* pTexturename[] =
 {
-	NULL,							// テクスチャなし
+	NULL,	// テクスチャなし
 	"data/TEXTURE/effect000.jpg",	// 丸
 	"data/TEXTURE/effect100.jpg",	// 線の丸
 	"data/TEXTURE/effect101.jpg",	// 二重丸
