@@ -1,8 +1,18 @@
 //**************************************************************************************************
 //
 // エフェクトの設定処理
-// Auther：唐﨑結斗
+// Auther：Karasaki Yuuto
 // Auther：Yuda Kaito
+//
+// 備考
+//	エフェクトの処理の主軸.cpp。
+//	数値の増減や、イベントの管理を主に担当
+//	
+//	2D時の基盤を唐崎が作成。
+//	外部読み込みの拡大。値変更の種類拡大。3Dの移植を湯田が作成。
+//	
+//	基本的に値は外部ファイルから読み込みを主軸。
+//	外部ファイルの読み込みに関してはLoadEffect.cppが担当。
 //
 //**************************************************************************************************
 //*******************************************************************************
@@ -12,7 +22,7 @@
 #include "spawn_effect.h"
 #include "LoadEffect.h"
 #include "input.h"
-#include "setup.h"
+#include "common.h"
 #include <assert.h>
 #include <time.h>
 
@@ -24,7 +34,6 @@
 //*******************************************************************************
 // プロトタイプ宣言
 //*******************************************************************************
-
 //-----------------------
 // エフェクト処理
 //-----------------------
@@ -34,17 +43,6 @@ void MoveEffect(Effect* effect);			// 移動処理
 bool DiedCriteriaEffect(Effect* effect);	// 死亡条件処理
 void DiedEffect(Effect* effect);			// 死亡時処理
 void OffScreenEffect(Effect* effect);		// 画面外処理
-
-//-----------------------
-// ロード関係
-//-----------------------
-void LoadFluct(FILE** file ,SFluctFloat* fluct);
-void LoadFluct(FILE* file, SFluctInt* fluct);
-
-//-----------------------
-// 乱数データ処理
-//-----------------------
-void InitRandom(FRandFloat* inRandomFloat, float fValue);	// 乱数の初期化
 
 //*******************************************************************************
 // 静的変数
@@ -58,7 +56,7 @@ static Effect s_aEffect[MAX_EFFECT];								// エフェクトの情報
 //-----------------------
 static const char* pTexturename[] =
 {
-	NULL,							// テクスチャなし
+	NULL,	// テクスチャなし
 	"data/TEXTURE/effect000.jpg",	// 丸
 	"data/TEXTURE/effect100.jpg",	// 線の丸
 	"data/TEXTURE/effect101.jpg",	// 二重丸
@@ -70,6 +68,9 @@ static_assert((sizeof(pTexturename) / sizeof(pTexturename[0])) == MAX_EFFECT_TYP
 
 //********************************************************************************
 // エフェクトの初期化処理
+// 備考
+//	初期化の主軸。ここにLoadEffectを持ってくる予定。
+//	エフェクトのタイプごとに保管する配列を作成予定。
 //********************************************************************************
 void InitEffect(void)
 {
@@ -154,6 +155,10 @@ void InitEffect(void)
 
 //********************************************************************************
 // エフェクトの終了処理
+// 備考
+// 備考
+//	終了処理の主軸。
+//	今のところ変更予定箇所なし。
 //********************************************************************************
 void UninitEffect(void)
 {
@@ -179,6 +184,10 @@ void UninitEffect(void)
 
 //********************************************************************************
 // エフェクトの更新処理
+// 備考
+//	更新の主軸。
+//	テクスチャアニメーションに関しては、後で関数化。common.cppに移す予定。
+//	関数のみにする予定。
 //********************************************************************************
 void UpdateEffect(void)
 {
@@ -199,16 +208,19 @@ void UpdateEffect(void)
 
 		pEffect->speedY.fValue -= pEffect->fGravity;	// 重力
 
-		
 		pEffect->pos += pEffect->move;	// 位置の更新
 
-		// 対角線の長さを算出する
-		pEffect->fLength = sqrtf(((pEffect->width.fValue * pEffect->width.fValue) + (pEffect->height.fValue * pEffect->height.fValue)) / 2.0f);
-		// 対角線の角度を算出
-		pEffect->fAngele = atan2f(pEffect->width.fValue, pEffect->height.fValue);
-		
+		// 対角線の長さと角度を算出する
+		DiagonalLine(&pEffect->fLength, &pEffect->fAngele, pEffect->width.fValue, pEffect->height.fValue);
+
+		// 死亡条件の確認後、死亡処理
+		DiedCriteriaEffect(pEffect) ? true : DiedEffect(pEffect);
+
+		// window画面以外に出た場合の処理
+		OffScreenEffect(pEffect);
+
 		// 頂点バッファーの設定
-		VERTEX_3D *pVtx;	// 頂点情報へのポインタを生成
+		VERTEX_3D *pVtx;
 
 		// 頂点バッファをロックし、頂点情報へのポインタを取得
 		s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
@@ -258,27 +270,20 @@ void UpdateEffect(void)
 		// 頂点バッファをアンロック
 		s_pVtxBuff->Unlock();
 
-		// 死亡条件を満たしているかチェック
-		if (!(DiedCriteriaEffect(pEffect)))
-		{
-			// 死亡処理
-			DiedEffect(pEffect);
-		}
-
-		// window画面以外に出た場合の処理
-		OffScreenEffect(pEffect);
 	}
 }
 
 //********************************************************************************
 // ステータスの変更処理
+// 引数１　変更するエフェクト
+// 備考
+//	処理の分け方を失敗した気がする。
+//	ここに移す処理は後で精査する。
 //********************************************************************************
 void StatChange(Effect * effect)
 {
-	// 対角線の長さを算出する
-	effect->fLength = sqrtf(((effect->width.fValue * effect->width.fValue) + (effect->height.fValue * effect->height.fValue)) / 2.0f);
-	// 対角線の角度を算出
-	effect->fAngele = atan2f(effect->width.fValue, effect->height.fValue);
+	// 対角線の値を算出
+	DiagonalLine(&effect->fLength,&effect->fAngele, effect->width.fValue, effect->height.fValue);
 
 	effect->randLife.nValue--;	// 寿命
 
@@ -296,6 +301,10 @@ void StatChange(Effect * effect)
 
 //********************************************************************************
 // ステータスの加算処理
+// 引数１　加算する値や加算値
+// 備考
+//	様々な加算計算をこの処理にまとめたい。
+//	タイプ分け実装予定。
 //********************************************************************************
 void AddStat(SFluctFloat* fluct)
 {
@@ -307,6 +316,10 @@ void AddStat(SFluctFloat* fluct)
 
 //********************************************************************************
 // 移動処理
+// 引数１　変更するエフェクト
+// 備考
+//	moveの決定がまだ未完成。射出角度をZ軸しか考慮していない。不具合があるかも
+//	effect->Injection の処理が不具合あり、しっかりと機能しない。
 //********************************************************************************
 void MoveEffect(Effect * effect)
 {
@@ -315,55 +328,22 @@ void MoveEffect(Effect * effect)
 	effect->move.y = tanf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->speedY.fValue;
 	effect->move.z = cosf((D3DX_PI * effect->shotAngleZ.fValue) + effect->rot.z) * effect->speedZ.fValue;
 
-	//for (int nHeight = 0; nHeight <= s_aMesh[0].nSurfaceHeight; nHeight++)
-	//{
-	//	float fRotHeight = D3DX_PI / s_aMesh[0].nSurfaceHeight;
-	//	float fHeight = cosf(fRotHeight * nHeight) * s_aMesh[0].fLineHeight;
-	//	for (int nWidth = 0; nWidth <= s_aMesh[0].nSurfaceWidth; nWidth++)
-	//	{
-	//		float fRotWidth = 2.0f * D3DX_PI / s_aMesh[0].nSurfaceWidth * nWidth;
-	//		NormalizeRot(fRotWidth);
-
-	//		effect->move.x = cosf(fRotWidth) * sinf(fRotHeight) * effect->speedX.fValue;
-	//		effect->move.y = cosf(fRotHeight) * effect->speedX.fValue;
-	//		effect->move.z = sinf(fRotWidth) * sinf(fRotHeight) * effect->speedX.fValue;
-
-	//		effect->move.x = -sinf((D3DX_PI * nCntParticle / 10) - (s_aParticle[nCntParticle].fAngle / (5 * s_aParticle[nCntParticle].fAttenuation)));
-	//		effect->move.y -= tanf(D3DX_PI) * s_aParticle[nCntParticle].fRadius / 2;
-	//		effect->move.z = -cosf((D3DX_PI * nCntParticle / 10) - (s_aParticle[nCntParticle].fAngle / (5 * s_aParticle[nCntParticle].fAttenuation)));
-	//	}
-	//}
-
 	if (effect->Injection == PARTICLMODE_CONVERGENCE)	// 収縮
 	{
 		float fRotMove, fRotDest, fRotDiff;
-		D3DXVECTOR3 PosDifference = D3DXVECTOR3(effect->posCenter.x - effect->pos.x, effect->posCenter.y - effect->pos.y, 0.0f);
+		D3DXVECTOR3 PosDifference(effect->posCenter.x - effect->pos.x, effect->posCenter.y - effect->pos.y, 0.0f);
 
 		fRotMove = atan2f(effect->move.x, effect->move.y);		// 現在の移動方向(角度)
 		fRotDest = atan2f(PosDifference.x, PosDifference.y);	// 目的の移動方向
 		fRotDiff = fRotDest - fRotMove;							// 目的の移動方向までの差分
 
 		// 角度の正規化
-		if (fRotDiff > D3DX_PI)
-		{// 目的の差分が半円周(+方向)を超える場合
-			fRotDiff -= (D3DX_PI * 2);
-		}
-		else if (fRotDiff < -D3DX_PI)
-		{// 目的の差分が半円周(-方向)を超える場合
-			fRotDiff += (D3DX_PI * 2);
-		}
+		NormalizeRot(&fRotDiff);
 
 		fRotMove += fRotDiff * 1.0f;	// 移動方向(角度)の補正
 
 		// 角度の正規化
-		if (fRotMove > D3DX_PI)
-		{// 移動方向(角度)が半円周(+方向)を超える場合
-			fRotMove -= (D3DX_PI * 2);
-		}
-		else if (fRotMove < -D3DX_PI)
-		{// 移動方向(角度)が半円周(-方向)を超える場合
-			fRotMove += (D3DX_PI * 2);
-		}
+		NormalizeRot(&fRotMove);
 
 		// 位置の更新
 		effect->move.x = sinf(fRotMove) * effect->speedX.fValue;
@@ -382,6 +362,9 @@ void MoveEffect(Effect * effect)
 
 //********************************************************************************
 // 死亡条件処理
+// 引数１　変更するエフェクト
+// 備考
+//	様々な消滅する条件を分けていく。基本、寿命で処理するが、タイプ分けする。
 //********************************************************************************
 bool DiedCriteriaEffect(Effect* effect)
 {
@@ -394,6 +377,10 @@ bool DiedCriteriaEffect(Effect* effect)
 
 //********************************************************************************
 // エフェクトの死亡処理
+// 引数１　変更するエフェクト
+// 備考
+//	死亡時の処理をまとめる処理。タイプ分けは終わった。
+//	ON_DIED_POPでエフェクトが召喚されない。修正事項
 //********************************************************************************
 void DiedEffect(Effect* effect)
 {
@@ -413,6 +400,11 @@ void DiedEffect(Effect* effect)
 
 //********************************************************************************
 // エフェクトの描画処理
+// 備考
+//	描画の処理の主軸。
+//	レンダーステート周辺のコードが汚い。直したい。
+//	RectDraw() という common.cpp の処理をやめて、別の処理に変えたい。
+//	逆行列は関数分けするか悩み中
 //********************************************************************************
 void DrawEffect(void)
 {
@@ -423,12 +415,14 @@ void DrawEffect(void)
 	{
 		// パーティクル情報の取得
 		Effect *pEffect = &(s_aEffect[i]);
+
 		if (!(pEffect->bUse))
 		{
 			continue;
 		}
 		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&pEffect->mtxWorld);	// 行列初期化関数(第1引数の行列を単位行列に初期化)
+
 		D3DXMATRIX mtxView;
 		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 
@@ -445,8 +439,13 @@ void DrawEffect(void)
 			pEffect->mtxWorld._32 = mtxView._23;
 			pEffect->mtxWorld._33 = mtxView._33;
 		}
-
-		// 位置を反映
+		else
+		{
+			// 向きを反映
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, pEffect->rot.y, pEffect->rot.x, pEffect->rot.z);	// 行列回転関数(第1引数にヨー(y)ピッチ(x)ロール(z)方向の回転行列を作成)
+			D3DXMatrixMultiply(&pEffect->mtxWorld, &pEffect->mtxWorld, &mtxRot);						// 行列掛け算関数(第2引数×第3引数第を１引数に格納)
+		}
+																								// 位置を反映
 		D3DXMatrixTranslation(&mtxTrans, pEffect->pos.x, pEffect->pos.y, pEffect->pos.z);		// 行列移動関数(第１引数にX,Y,Z方向の移動行列を作成)
 		D3DXMatrixMultiply(&pEffect->mtxWorld, &pEffect->mtxWorld, &mtxTrans);					// 行列掛け算関数(第2引数×第3引数第を１引数に格納)
 
@@ -470,25 +469,26 @@ void DrawEffect(void)
 		{
 			pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 		}
-		
+
 		// アルファテストを有効
 		pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, true);
 		pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 		pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
-		if (pEffect->blend == BLENDMODE_ADDITION)
+		switch (pEffect->blend)
 		{
+		case BLENDMODE_ADDITION:
 			// αブレンディングを加算合成に設定
-			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);			// ブレンドオペレーション(計算方式)
-			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
-		}
-		else if (pEffect->blend == BLENDMODE_SUBTRACT)
-		{
+			AddSynthesis(pDevice);
+			break;
+		case BLENDMODE_SUBTRACT:
 			// αブレンディングを減算合成に設定
 			pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_REVSUBTRACT);
 			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+			break;
+		default:
+			break;
 		}
 
 		// 描画
@@ -520,6 +520,12 @@ void DrawEffect(void)
 
 //********************************************************************************
 // エフェクトの設定処理
+// 引数１　エフェクトを出現する位置
+// 引数２　エフェクトの種類
+// 備考
+//	今、ここでファイル読み込みをしているが、初期化で読み込みたい。
+//	乱数の値設定をもっと綺麗な処理に切り替えたい。
+//	頂点バッファーの設定をラインエフェクトの時に、切り替えられるようになりたい。
 //********************************************************************************
 void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 {
@@ -580,9 +586,6 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		SetRandom(&pEffect->shotAngleY.Add, &pEffect->shotAngleY.fAddValue);	// 発射角度(Y軸)
 		SetRandom(&pEffect->shotAngleZ.Add, &pEffect->shotAngleZ.fAddValue);	// 発射角度(Z軸)
 
-		pEffect->nDivisionU = 1;
-		pEffect->nDivisionV = 1;
-
 		pEffect->nDivisionMAX = pEffect->nDivisionU * pEffect->nDivisionV;	// 分割数の計算
 
 		// 角度の代入
@@ -596,10 +599,8 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		pEffect->col.b = pEffect->colB.fValue;
 		pEffect->col.a = pEffect->colA.fValue;
 
-		// 対角線の長さを算出する
-		pEffect->fLength = sqrtf(((pEffect->width.fValue * pEffect->width.fValue) + (pEffect->height.fValue * pEffect->height.fValue)) / 2.0f);
-		// 対角線の角度を算出
-		pEffect->fAngele = atan2f(pEffect->width.fValue, pEffect->height.fValue);
+		// 対角線の値を算出
+		DiagonalLine(&pEffect->fLength, &pEffect->fAngele, pEffect->width.fValue, pEffect->height.fValue);
 
 		// 頂点情報へのポインタを生成
 		VERTEX_3D *pVtx;
@@ -641,6 +642,9 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 
 //********************************************************************************
 // エフェクトの画面外処理
+// 引数１　変更するエフェクト
+// 備考
+//	2Dの時ののなごり。果たして使うか分からないので一応残している。
 //********************************************************************************
 void OffScreenEffect(Effect* effect)
 {
@@ -658,29 +662,12 @@ void OffScreenEffect(Effect* effect)
 }
 
 //********************************************************************************
-// SFluctFloatの値の読み込み
-//********************************************************************************
-void LoadFluct(FILE** file, SFluctFloat* fluct)
-{
-}
-
-//********************************************************************************
-// SFluctIntの値の読み込み
-//********************************************************************************
-void LoadFluct(FILE* file, SFluctInt* fluct)
-{
-}
-
-//********************************************************************************
-// SRandFloatの初期化
-//********************************************************************************
-void InitRandom(FRandFloat* inRandomFloat, float fValue)
-{
-	inRandomFloat->bIsRandom = false;
-}
-
-//********************************************************************************
 // SRandFloatの乱数結果を反映
+// 引数１　乱数が設定出来る float型
+// 引数２　値
+// 備考
+//	乱数が使用する場合は、引数２の値を乱数の値に変更する。
+//	乱数が使用しない場合は、何も値も変更しない。
 //********************************************************************************
 void SetRandom(FRandFloat* fluct,float* fValue)
 {
@@ -692,6 +679,11 @@ void SetRandom(FRandFloat* fluct,float* fValue)
 
 //********************************************************************************
 // SRandIntの乱数結果を反映
+// 引数１　乱数が設定出来る int型
+// 引数２　値
+// 備考
+//	乱数が使用する場合は、引数２の値を乱数の値に変更する。
+//	乱数が使用しない場合は、何も値も変更しない。
 //********************************************************************************
 void SetRandom(FRandInt* fluct, int* nValue)
 {
