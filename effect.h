@@ -35,7 +35,7 @@ typedef enum
 	EFFECT_TEX_DOUBLE_CIRCLE,	// 二重丸
 	EFFECT_TEX_THIN_SQUARE,		// 細い四角
 	EFFECT_TEX_THIN_TRIANGLE,	// 三角
-	MAX_EFFECT_TYPE_TEX
+	MAX_EFFECT_TYPE_TEX			// 最大数
 }EFFECT_TEX;
 
 //------------------------------------
@@ -68,6 +68,22 @@ typedef enum
 	ON_DIED_POP,		// エフェクトの出現
 	MAX_ON_DIED			// 最大数
 }EFFECT_ON_DIED;
+
+//------------------------------------
+// 加算モードの列挙型
+//------------------------------------
+typedef enum
+{
+	ADD_MODE_CONSTANT = 0,		// 定数
+	ADD_MODE_SIN,				// SINカーブ
+	ADD_MODE_COS,				// COSカーブ
+	MAX_ADD_MODE				// パーティクルモードの最大数
+	/*
+	move += x;
+	move += sinf(y) * x;
+	move += cosf(y) * x;
+	*/
+}ADD_MODE;
 
 //------------------------------------
 // 射出モードの列挙型
@@ -133,6 +149,17 @@ typedef struct
 } SFluctInt;
 
 //------------------------------------
+// 変動を使用する D3DXVECTOR3型
+//------------------------------------
+typedef struct
+{
+	D3DXVECTOR3 value;	// 現在値
+	D3DXVECTOR3 fAdd;	// 加算値
+	FRandInt initial;	// 初期値
+	FRandInt Add;		// 加算値
+} SFluctVector3;
+
+//------------------------------------
 // パーティクル構造体
 //------------------------------------
 typedef struct
@@ -166,11 +193,11 @@ typedef struct
 	SFluctFloat		rotZ;	// Zの向き
 	
 	// 移動系統変数
-	float fGravity;			// 重力
 	D3DXVECTOR3 move;		// 移動量
 	SFluctFloat speedX;		// 移動速度(X軸)
 	SFluctFloat speedY;		// 移動速度(Y軸)
 	SFluctFloat speedZ;		// 移動速度(Z軸)
+	float fGravity;			// 重力
 
 	// 色系統変数
 	D3DXCOLOR col;		// 頂点カラー

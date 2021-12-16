@@ -71,7 +71,7 @@ void UninitSpawnEffect(void)
 void UpdateSpawnEffect(void)
 {
 	// モードの切り替え変数
-	if (GetKeyboardTrigger(DIK_F1))
+	if (GetKeyboardTrigger(DIK_F9))
 	{// [T]キーが押されたとき
 		g_nMode++;
 
@@ -372,24 +372,24 @@ void TestParticle(void)
 {
 	if (GetKeyboardPress(DIK_DOWN))
 	{// [↓]キーが押されたとき
-		if (g_aParticle[s_nPointCnt].nCountParticle > 1)
+		if (g_aSpawnPoint[s_nPointCnt].nCountParticle > 1)
 		{
-			g_aParticle[s_nPointCnt].nCountParticle--;
+			g_aSpawnPoint[s_nPointCnt].nCountParticle--;
 		}
-		else if (g_aParticle[s_nPointCnt].nCountParticle <= 1)
+		else if (g_aSpawnPoint[s_nPointCnt].nCountParticle <= 1)
 		{
-			g_aParticle[s_nPointCnt].nCountParticle = 1;
+			g_aSpawnPoint[s_nPointCnt].nCountParticle = 1;
 		}
 	}
 	else if (GetKeyboardPress(DIK_UP))
 	{// [↑]キーが押されたとき
-		if (g_aParticle[s_nPointCnt].nCountParticle < 1000)
+		if (g_aSpawnPoint[s_nPointCnt].nCountParticle < 1000)
 		{
-			g_aParticle[s_nPointCnt].nCountParticle++;
+			g_aSpawnPoint[s_nPointCnt].nCountParticle++;
 		}
-		else if (g_aParticle[s_nPointCnt].nCountParticle >= 1000)
+		else if (g_aSpawnPoint[s_nPointCnt].nCountParticle >= 1000)
 		{
-			g_aParticle[s_nPointCnt].nCountParticle = 1000;
+			g_aSpawnPoint[s_nPointCnt].nCountParticle = 1000;
 		}
 	}
 	if (GetKeyboardTrigger(DIK_RETURN))
@@ -400,7 +400,7 @@ void TestParticle(void)
 			{
 				for (int nCountEffect = 0; nCountEffect < g_aParticle[nCntParticle].nPopCnt; nCountEffect++)
 				{// Particleの設定
-					for (int k = 0; k < g_aParticle[s_nPointCnt].nCountParticle; k++)
+					for (int k = 0; k < g_aSpawnPoint[s_nPointCnt].nCountParticle; k++)
 					{
 						SetEffect(g_aSpawnPoint[s_nPointCnt].pos, TEST_TYPE_EFFECT);
 					}

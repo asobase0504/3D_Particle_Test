@@ -508,7 +508,7 @@ void DrawFPS(void)
 		wsprintf(&aStrCopy[0], "扱うエフェクト数[ 9 / 0 ]:%d\n", nMaxSwitch);
 		strcat(&aStr[0], &aStrCopy[0]);
 
-		wsprintf(&aStrCopy[0], "扱うエフェクト[ TUB / LSIFT ]:%d\n", nSwitch + 1);
+		wsprintf(&aStrCopy[0], "扱うエフェクト[ TAB / LSHIFT ]:%d\n", nSwitch + 1);
 		strcat(&aStr[0], &aStrCopy[0]);
 
 		wsprintf(&aStrCopy[0], "[F3]で[%d]を保存\n", nSwitch + 1);
