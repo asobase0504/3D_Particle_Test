@@ -25,13 +25,23 @@ void SaveEffect(Effect* effect)
 	 // Redカラー
 		fprintf(pFile, "TEXTURE = %d\n\n", (int)effect->tex);
 
+		// 面の数
+		fprintf(pFile, "Surface\n");
+		fprintf(pFile, "Value = %d %d\n", effect->nSurfaceWidth, effect->nSurfaceHeight);
+		fprintf(pFile, "end\n\n");
+
 		// セット時のPosのずれ
 		fprintf(pFile, "posLag\n");
-		fprintf(pFile, "nValue = %f %f %f\n", effect->posRand.x, effect->posRand.y, effect->posRand.z);
+		fprintf(pFile, "Value = %f %f %f\n", effect->posRand.x, effect->posRand.y, effect->posRand.z);
+		fprintf(pFile, "end\n\n");
+
+		// セット時のPosのずれ
+		fprintf(pFile, "posLag\n");
+		fprintf(pFile, "Value = %f %f %f\n", effect->posRand.x, effect->posRand.y, effect->posRand.z);
 		fprintf(pFile, "end\n\n");
 
 		fprintf(pFile, "ColRed\n");
-		fprintf(pFile, "nValue = %f\n", effect->colR.fValue);
+		fprintf(pFile, "Value = %f\n", effect->colR.fValue);
 		if (effect->colR.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->colR.initial.fMax, effect->colR.initial.fMin);
@@ -44,7 +54,7 @@ void SaveEffect(Effect* effect)
 
 		// Blueカラー
 		fprintf(pFile, "ColBlue\n");
-		fprintf(pFile, "nValue = %f\n", effect->colB.fValue);
+		fprintf(pFile, "Value = %f\n", effect->colB.fValue);
 		if (effect->colB.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->colB.initial.fMax, effect->colB.initial.fMin);
@@ -57,7 +67,7 @@ void SaveEffect(Effect* effect)
 
 		// Greenカラー
 		fprintf(pFile, "ColGreen\n");
-		fprintf(pFile, "nValue = %f\n", effect->colG.fValue);
+		fprintf(pFile, "Value = %f\n", effect->colG.fValue);
 		if (effect->colG.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->colG.initial.fMax, effect->colG.initial.fMin);
@@ -70,7 +80,7 @@ void SaveEffect(Effect* effect)
 
 		// Alphaカラー
 		fprintf(pFile, "ColAlpha\n");
-		fprintf(pFile, "nValue = %f\n", effect->colA.fValue);
+		fprintf(pFile, "Value = %f\n", effect->colA.fValue);
 		if (effect->colA.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->colA.initial.fMax, effect->colA.initial.fMin);
@@ -83,7 +93,7 @@ void SaveEffect(Effect* effect)
 
 		// 幅
 		fprintf(pFile, "Width\n");
-		fprintf(pFile, "nValue = %f\n", effect->width.fValue);
+		fprintf(pFile, "Value = %f\n", effect->width.fValue);
 		if (effect->width.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->width.initial.fMax, effect->width.initial.fMin);
@@ -96,7 +106,7 @@ void SaveEffect(Effect* effect)
 
 		// 高さ
 		fprintf(pFile, "Height\n");
-		fprintf(pFile, "nValue = %f\n", effect->height.fValue);
+		fprintf(pFile, "Value = %f\n", effect->height.fValue);
 		if (effect->height.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->height.initial.fMax, effect->height.initial.fMin);
@@ -109,7 +119,7 @@ void SaveEffect(Effect* effect)
 
 		// 寿命
 		fprintf(pFile, "Life\n");
-		fprintf(pFile, "nValue = %d\n", effect->randLife.nValue);
+		fprintf(pFile, "Value = %d\n", effect->randLife.nValue);
 		if (effect->randLife.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %d %d\n", effect->randLife.initial.nMax, effect->randLife.initial.nMin);
@@ -122,7 +132,7 @@ void SaveEffect(Effect* effect)
 
 		// 移動速度
 		fprintf(pFile, "Speed_X\n");
-		fprintf(pFile, "nValue = %f\n", effect->speedX.fValue);
+		fprintf(pFile, "Value = %f\n", effect->speedX.fValue);
 		if (effect->speedX.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->speedX.initial.fMax, effect->speedX.initial.fMin);
@@ -134,7 +144,7 @@ void SaveEffect(Effect* effect)
 		fprintf(pFile, "end\n\n");
 
 		fprintf(pFile, "Speed_Y\n");
-		fprintf(pFile, "nValue = %f\n", effect->speedY.fValue);
+		fprintf(pFile, "Value = %f\n", effect->speedY.fValue);
 		if (effect->speedY.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->speedY.initial.fMax, effect->speedY.initial.fMin);
@@ -146,7 +156,7 @@ void SaveEffect(Effect* effect)
 		fprintf(pFile, "end\n\n");
 
 		fprintf(pFile, "Speed_Z\n");
-		fprintf(pFile, "nValue = %f\n", effect->speedZ.fValue);
+		fprintf(pFile, "Value = %f\n", effect->speedZ.fValue);
 		if (effect->speedZ.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->speedZ.initial.fMax, effect->speedZ.initial.fMin);
@@ -159,7 +169,7 @@ void SaveEffect(Effect* effect)
 
 		// 発射角度
 		fprintf(pFile, "Aangle_X\n");
-		fprintf(pFile, "nValue = %f\n", effect->shotAngleX.fValue);
+		fprintf(pFile, "Value = %f\n", effect->shotAngleX.fValue);
 		if (effect->shotAngleX.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->shotAngleX.initial.fMax, effect->shotAngleX.initial.fMin);
@@ -171,7 +181,7 @@ void SaveEffect(Effect* effect)
 		fprintf(pFile, "end\n\n");
 
 		fprintf(pFile, "Aangle_Y\n");
-		fprintf(pFile, "nValue = %f\n", effect->shotAngleY.fValue);
+		fprintf(pFile, "Value = %f\n", effect->shotAngleY.fValue);
 		if (effect->shotAngleY.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->shotAngleY.initial.fMax, effect->shotAngleY.initial.fMin);
@@ -183,7 +193,7 @@ void SaveEffect(Effect* effect)
 		fprintf(pFile, "end\n\n");
 
 		fprintf(pFile, "Aangle_Z\n");
-		fprintf(pFile, "nValue = %f\n", effect->shotAngleZ.fValue);
+		fprintf(pFile, "Value = %f\n", effect->shotAngleZ.fValue);
 		if (effect->shotAngleZ.initial.bIsRandom)
 		{
 			fprintf(pFile, "InitialRand = %f %f\n", effect->shotAngleZ.initial.fMax, effect->shotAngleZ.initial.fMin);
@@ -196,16 +206,16 @@ void SaveEffect(Effect* effect)
 
 		// 重力
 		fprintf(pFile, "gravity\n");
-		fprintf(pFile, "nValue = %f\n", effect->fGravity);
+		fprintf(pFile, "Value = %f\n", effect->fGravity);
 		fprintf(pFile, "end\n\n");
 
 		// 分割数
 		fprintf(pFile, "DivisionU\n");
-		fprintf(pFile, "nValue = %d\n", effect->nDivisionU);
+		fprintf(pFile, "Value = %d\n", effect->nDivisionU);
 		fprintf(pFile, "end\n\n");
 		// 分割数
 		fprintf(pFile, "DivisionV\n");
-		fprintf(pFile, "nValue = %d\n", effect->nDivisionV);
+		fprintf(pFile, "Value = %d\n", effect->nDivisionV);
 		fprintf(pFile, "end\n\n");
 
 		// ビルボード

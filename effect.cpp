@@ -14,6 +14,8 @@
 //	基本的に値は外部ファイルから読み込みを主軸。
 //	外部ファイルの読み込みに関してはLoadEffect.cppが担当。
 //
+//	ラインエフェクトの実装や、メッシュエフェクトを導入したい
+//
 //**************************************************************************************************
 //*******************************************************************************
 // include
@@ -23,6 +25,7 @@
 #include "LoadEffect.h"
 #include "input.h"
 #include "common.h"
+#include "common_effect.h"
 #include <assert.h>
 #include <time.h>
 
@@ -30,6 +33,9 @@
 // マクロ定義
 //*******************************************************************************
 #define MAX_EFFECT	(4096)		// エフェクトの最大数
+#define MAX_URL		(255)		// アドレスの長さの許容量
+#define MAX_TYPE	(64)		// 読み込めるエフェクトの種類の最大数
+#define	LINEVTX(Vtx)	(Vtx + 1)
 
 //*******************************************************************************
 // プロトタイプ宣言
@@ -43,20 +49,23 @@ void MoveEffect(Effect* effect);			// 移動処理
 bool DiedCriteriaEffect(Effect* effect);	// 死亡条件処理
 void DiedEffect(Effect* effect);			// 死亡時処理
 void OffScreenEffect(Effect* effect);		// 画面外処理
+void InitRandEffect(Effect* effect);		// 最初に行う乱数処理
+void SetVtx();				// 頂点の設定
 
 //*******************************************************************************
 // 静的変数
 //*******************************************************************************
 static LPDIRECT3DTEXTURE9 s_pTexture[MAX_EFFECT_TYPE_TEX] = {};		// テクスチャへのポインタ
 static LPDIRECT3DVERTEXBUFFER9 s_pVtxBuff = {};						// 頂点バッファへのポインタ
+static LPDIRECT3DINDEXBUFFER9 s_pIdxBuff = NULL;	// インデックスバッファへのポインタ
 static Effect s_aEffect[MAX_EFFECT];								// エフェクトの情報
 static Effect s_aTypeEffect[MAX_TYPE_EFFECT];						// ファイルを読み込んだエフェクト
 
 //-----------------------
 // テクスチャ名
 //-----------------------
-static char pTexturename[64][1024] = {};
-static Effect pTypeEffect[64] = {};
+static char pTexturename[MAX_TYPE][MAX_URL] = {};
+static Effect pTypeEffect[MAX_TYPE] = {};
 
 //********************************************************************************
 // エフェクトの初期化処理
@@ -73,7 +82,7 @@ void InitEffect(void)
 	
 	FILE* pFile;
 
-	char read[255] = {};
+	char read[MAX_URL] = {};
 	int nCnt;
 
 	// ファイルを開く
@@ -105,71 +114,21 @@ void InitEffect(void)
 			pTypeEffect[i]  = LoadEffect((EFFECT_TYPE)i);
 		}
 	}
+	//ファイルを閉じる
+	fclose(pFile);
 
 	// エフェクトの情報を初期化
 	ZeroMemory(s_aEffect, sizeof(s_aEffect));
 
-	// 頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4 * MAX_EFFECT,		// 確保するバッファサイズ
-		D3DUSAGE_WRITEONLY,
-		FVF_VERTEX_3D,
-		D3DPOOL_MANAGED,
-		&s_pVtxBuff,
-		NULL);
-
-	Effect* pEffect = NULL;	// エフェクトのポインタ型
-
-	// 頂点情報へのポインタを生成
-	VERTEX_3D *pVtx;
-
-	// 頂点バッファをロックし、頂点情報へのポインタを取得
-	s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
-
-	// 頂点バッファーの設定
 	for (int i = 0; i < MAX_EFFECT; i++)
 	{
-		pEffect = &(s_aEffect[i]);
+		s_aEffect[i].nSurfaceHeight = 2;
+		s_aEffect[i].nSurfaceWidth = 2;
 
-		// 頂点座標の設定
-		pVtx[0].pos.x = sinf(pEffect->rot.z + (D3DX_PI + pEffect->fAngele)) * pEffect->fLength;
-		pVtx[0].pos.y = cosf(pEffect->rot.z + (D3DX_PI + pEffect->fAngele)) * pEffect->fLength;
-		pVtx[0].pos.z = 0.0f;
-
-		pVtx[1].pos.x = sinf(pEffect->rot.z + (D3DX_PI - pEffect->fAngele)) * pEffect->fLength;
-		pVtx[1].pos.y = cosf(pEffect->rot.z + (D3DX_PI - pEffect->fAngele)) * pEffect->fLength;
-		pVtx[1].pos.z = 0.0f;
-
-		pVtx[2].pos.x = sinf(pEffect->rot.z - (0 + pEffect->fAngele)) * pEffect->fLength;
-		pVtx[2].pos.y = cosf(pEffect->rot.z - (0 + pEffect->fAngele)) * pEffect->fLength;
-		pVtx[2].pos.z = 0.0f;
-
-		pVtx[3].pos.x = sinf(pEffect->rot.z - (0 - pEffect->fAngele)) * pEffect->fLength;
-		pVtx[3].pos.y = cosf(pEffect->rot.z - (0 - pEffect->fAngele)) * pEffect->fLength;
-		pVtx[3].pos.z = 0.0f;
-
-		// 頂点カラーの設定
-		pVtx[0].col = pEffect->col;
-		pVtx[1].col = pEffect->col;
-		pVtx[2].col = pEffect->col;
-		pVtx[3].col = pEffect->col;
-
-		//各頂点の法線の設定　※　ベクトルの大きさは1にする必要がある
-		pVtx[0].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		pVtx[1].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		pVtx[2].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-		pVtx[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-		// テクスチャ座標
-		pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
-
-		pVtx += 4;	// 頂点データのポインタを4つ分進める
 	}
 
-	// 頂点バッファをアンロック
-	s_pVtxBuff->Unlock();
+	// 頂点バッファーの生成
+	SetVtx();
 }
 
 //********************************************************************************
@@ -211,6 +170,7 @@ void UninitEffect(void)
 void UpdateEffect(void)
 {
 	Effect* pEffect = NULL;
+	SetVtx();
 	for (int i = 0; i < MAX_EFFECT; i++)
 	{
 		pEffect = &(s_aEffect[i]);
@@ -249,20 +209,20 @@ void UpdateEffect(void)
 		pVtx += 4 * i;
 
 		// 頂点座標の設定
-		pVtx[0].pos.x = sinf(pEffect->rot.z + (D3DX_PI + pEffect->fAngele)) * pEffect->fLength;
-		pVtx[0].pos.y = cosf(pEffect->rot.z + (D3DX_PI + pEffect->fAngele)) * pEffect->fLength;
+		pVtx[0].pos.x = -pEffect->width.fValue;
+		pVtx[0].pos.y = pEffect->height.fValue;
 		pVtx[0].pos.z = 0.0f;
 
-		pVtx[1].pos.x = sinf(pEffect->rot.z + (D3DX_PI - pEffect->fAngele)) * pEffect->fLength;
-		pVtx[1].pos.y = cosf(pEffect->rot.z + (D3DX_PI - pEffect->fAngele)) * pEffect->fLength;
+		pVtx[1].pos.x = pEffect->width.fValue;
+		pVtx[1].pos.y = pEffect->height.fValue;
 		pVtx[1].pos.z = 0.0f;
 
-		pVtx[2].pos.x = sinf(pEffect->rot.z + -pEffect->fAngele) * pEffect->fLength;
-		pVtx[2].pos.y = cosf(pEffect->rot.z + -pEffect->fAngele) * pEffect->fLength;
+		pVtx[2].pos.x = -pEffect->width.fValue;
+		pVtx[2].pos.y = -pEffect->height.fValue;
 		pVtx[2].pos.z = 0.0f;
 
-		pVtx[3].pos.x = sinf(pEffect->rot.z + pEffect->fAngele) * pEffect->fLength;
-		pVtx[3].pos.y = cosf(pEffect->rot.z + pEffect->fAngele) * pEffect->fLength;
+		pVtx[3].pos.x = pEffect->width.fValue;
+		pVtx[3].pos.y = -pEffect->height.fValue;
 		pVtx[3].pos.z = 0.0f;
 
 		// 頂点カラーの設定
@@ -275,17 +235,11 @@ void UpdateEffect(void)
 		pEffect->nCntAnim++;
 		if ((pEffect->nCntAnim % pEffect->nDivisionMAX) == 0)
 		{
+			// アニメーションのパターン計算
 			pEffect->nPatternAnim = (pEffect->nPatternAnim + 1) % pEffect->nDivisionMAX;
 
-			float fLeft = 1.0f / pEffect->nDivisionU * (pEffect->nPatternAnim % pEffect->nDivisionU);
-			float fRight = 1.0f / pEffect->nDivisionU *(pEffect->nPatternAnim % pEffect->nDivisionU) + 1.0f / pEffect->nDivisionU;
-			float fUp = 1.0f / pEffect->nDivisionV * (pEffect->nPatternAnim / pEffect->nDivisionU);
-			float fDown = 1.0f / pEffect->nDivisionV * (pEffect->nPatternAnim / pEffect->nDivisionU + 1.0f / pEffect->nDivisionV * pEffect->nDivisionV);
-
-			pVtx[0].tex = D3DXVECTOR2(fLeft, fUp);
-			pVtx[1].tex = D3DXVECTOR2(fRight, fUp);
-			pVtx[2].tex = D3DXVECTOR2(fLeft, fDown);
-			pVtx[3].tex = D3DXVECTOR2(fRight, fDown);
+			// テクスチャアニメーション
+			TexAnim(pVtx, pEffect->nDivisionU, pEffect->nDivisionV, pEffect->nPatternAnim);
 		}
 
 		// 頂点バッファをアンロック
@@ -329,9 +283,21 @@ void StatChange(Effect * effect)
 //********************************************************************************
 void AddStat(SFluctFloat* fluct)
 {
-	if (fluct->Add.bIsRandom)
+	switch (fluct->addMode)
 	{
+	case ADD_MODE_CONSTANT:
 		fluct->fValue += fluct->fAddValue;
+		break;
+	case ADD_MODE_SIN:
+		fluct->fAddValue += 0.01f;
+		fluct->fValue += sinf(fluct->fAddValue);
+		break;
+	case ADD_MODE_COS:
+		fluct->fAddValue += 0.01f;
+		fluct->fValue += cosf(fluct->fAddValue);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -431,6 +397,8 @@ void DrawEffect(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 	D3DXMATRIX mtxRot, mtxTrans;	// 計算用マトリックス
+	int IdxCnt = 0;						// 今のどこからのインデックスかカウント
+	int VtxCnt = 0;						// 今のどこからのインデックスかカウント
 
 	for (int i = 0; i < MAX_EFFECT; i++)
 	{
@@ -444,12 +412,13 @@ void DrawEffect(void)
 		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&pEffect->mtxWorld);	// 行列初期化関数(第1引数の行列を単位行列に初期化)
 
-		D3DXMATRIX mtxView;
-		pDevice->GetTransform(D3DTS_VIEW, &mtxView);
 
 		// カメラの逆行列を設定
 		if (pEffect->bIsBillboard)
 		{
+			D3DXMATRIX mtxView;
+			pDevice->GetTransform(D3DTS_VIEW, &mtxView);
+	
 			pEffect->mtxWorld._11 = mtxView._11;
 			pEffect->mtxWorld._12 = mtxView._21;
 			pEffect->mtxWorld._13 = mtxView._31;
@@ -466,7 +435,8 @@ void DrawEffect(void)
 			D3DXMatrixRotationYawPitchRoll(&mtxRot, pEffect->rot.y, pEffect->rot.x, pEffect->rot.z);	// 行列回転関数(第1引数にヨー(y)ピッチ(x)ロール(z)方向の回転行列を作成)
 			D3DXMatrixMultiply(&pEffect->mtxWorld, &pEffect->mtxWorld, &mtxRot);						// 行列掛け算関数(第2引数×第3引数第を１引数に格納)
 		}
-																								// 位置を反映
+		
+		// 位置を反映
 		D3DXMatrixTranslation(&mtxTrans, pEffect->pos.x, pEffect->pos.y, pEffect->pos.z);		// 行列移動関数(第１引数にX,Y,Z方向の移動行列を作成)
 		D3DXMatrixMultiply(&pEffect->mtxWorld, &pEffect->mtxWorld, &mtxTrans);					// 行列掛け算関数(第2引数×第3引数第を１引数に格納)
 
@@ -514,6 +484,21 @@ void DrawEffect(void)
 
 		// 描画
 		RectDraw(pDevice, s_pTexture[pEffect->tex], i * 4);
+
+		// テクスチャの設定
+		pDevice->SetTexture(0, s_pTexture[pEffect->tex]);
+
+		// ポリゴン描画
+		pDevice->DrawIndexedPrimitive(
+			D3DPT_TRIANGLESTRIP,		// プリミティブの種類
+			VtxCnt,						// 描画する最初の頂点バッファ
+			0,							// インデックスの最小値
+			pEffect->nVtx,				// 頂点数
+			IdxCnt,						// 描画する最初の頂点インデックス
+			pEffect->nPolygon);			// プリミティブ(ポリゴン)数
+			
+		IdxCnt += pEffect->nIdx;
+		VtxCnt += pEffect->nVtx;
 
 		// ライトを有効にする
 		pDevice->SetRenderState(D3DRS_LIGHTING, true);
@@ -578,20 +563,9 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 			pEffect->pos.y += rand() % (int)(pEffect->posRand.y + 1) - pEffect->posRand.y;
 			pEffect->pos.z += rand() % (int)(pEffect->posRand.z + 1) - pEffect->posRand.z;
 		}
-											   
-		SetRandom(&pEffect->colR.initial, &pEffect->colR.fValue);				// Redの出現時の数値
-		SetRandom(&pEffect->colG.initial, &pEffect->colG.fValue);				// Greenの出現時の数値
-		SetRandom(&pEffect->colB.initial, &pEffect->colB.fValue);				// Blueの出現時の数値
-		SetRandom(&pEffect->colA.initial, &pEffect->colA.fValue);				// Alphaの出現時の数値
-		SetRandom(&pEffect->speedX.initial, &pEffect->speedX.fValue);			// 移動量(X軸)
-		SetRandom(&pEffect->speedY.initial, &pEffect->speedY.fValue);			// 移動量(Y軸)
-		SetRandom(&pEffect->speedZ.initial, &pEffect->speedZ.fValue);			// 移動量(Z軸)
-		SetRandom(&pEffect->randLife.initial, &pEffect->randLife.nValue);		// 寿命
-		SetRandom(&pEffect->width.initial, &pEffect->width.fValue);				// 幅
-		SetRandom(&pEffect->height.initial, &pEffect->height.fValue);			// 高さ
-		SetRandom(&pEffect->shotAngleX.initial, &(pEffect->shotAngleX.fValue));	// 発射角度(X軸)
-		SetRandom(&pEffect->shotAngleY.initial, &(pEffect->shotAngleY.fValue));	// 発射角度(Y軸)
-		SetRandom(&pEffect->shotAngleZ.initial, &(pEffect->shotAngleZ.fValue));	// 発射角度(Z軸)
+		
+		// 乱数の適用
+		InitRandEffect(pEffect);
 
 		SetRandom(&pEffect->colR.Add, &pEffect->colR.fAddValue);				// Redの出現時の数値
 		SetRandom(&pEffect->colG.Add, &pEffect->colG.fAddValue);				// Greenの出現時の数値
@@ -631,20 +605,20 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 		pVtx += 4 * i;	// 頂点データのポインタを4つ分進める
 		
 		// 頂点座標の設定
-		pVtx[0].pos.x = sinf(pEffect->rot.z + (D3DX_PI + pEffect->fAngele)) * pEffect->fLength;
-		pVtx[0].pos.y = cosf(pEffect->rot.z + (D3DX_PI + pEffect->fAngele)) * pEffect->fLength;
+		pVtx[0].pos.x = -pEffect->width.fValue;
+		pVtx[0].pos.y = pEffect->height.fValue;
 		pVtx[0].pos.z = 0.0f;
 
-		pVtx[1].pos.x = sinf(pEffect->rot.z + (D3DX_PI - pEffect->fAngele)) * pEffect->fLength;
-		pVtx[1].pos.y = cosf(pEffect->rot.z + (D3DX_PI - pEffect->fAngele)) * pEffect->fLength;
+		pVtx[1].pos.x = pEffect->width.fValue;
+		pVtx[1].pos.y = pEffect->height.fValue;
 		pVtx[1].pos.z = 0.0f;
 
-		pVtx[2].pos.x = sinf(pEffect->rot.z + -pEffect->fAngele) * pEffect->fLength;
-		pVtx[2].pos.y = cosf(pEffect->rot.z + -pEffect->fAngele) * pEffect->fLength;
+		pVtx[2].pos.x = -pEffect->width.fValue;
+		pVtx[2].pos.y = -pEffect->height.fValue;
 		pVtx[2].pos.z = 0.0f;
 
-		pVtx[3].pos.x = sinf(pEffect->rot.z + pEffect->fAngele) * pEffect->fLength;
-		pVtx[3].pos.y = cosf(pEffect->rot.z + pEffect->fAngele) * pEffect->fLength;
+		pVtx[3].pos.x = pEffect->width.fValue;
+		pVtx[3].pos.y = -pEffect->height.fValue;
 		pVtx[3].pos.z = 0.0f;
 
 		// 頂点カラーの設定
@@ -683,33 +657,152 @@ void OffScreenEffect(Effect* effect)
 }
 
 //********************************************************************************
-// SRandFloatの乱数結果を反映
+// セット時に乱数を行う処理
 // 引数１　乱数が設定出来る float型
-// 引数２　値
 // 備考
-//	乱数が使用する場合は、引数２の値を乱数の値に変更する。
-//	乱数が使用しない場合は、何も値も変更しない。
+//	まとめただけ、もっとうまく纏めたい。
 //********************************************************************************
-void SetRandom(FRandFloat* fluct,float* fValue)
+void InitRandEffect(Effect * effect)
 {
-	if (fluct->bIsRandom)	// 乱数が使用されている
-	{
-		*fValue = (rand() / (float)RAND_MAX) * (fluct->fMax - fluct->fMin) + fluct->fMin;
-	}
+	SetRandom(&effect->colR.initial, &effect->colR.fValue);					// Redの出現時の数値
+	SetRandom(&effect->colG.initial, &effect->colG.fValue);					// Greenの出現時の数値
+	SetRandom(&effect->colB.initial, &effect->colB.fValue);					// Blueの出現時の数値
+	SetRandom(&effect->colA.initial, &effect->colA.fValue);					// Alphaの出現時の数値
+	SetRandom(&effect->speedX.initial, &effect->speedX.fValue);				// 移動量(X軸)
+	SetRandom(&effect->speedY.initial, &effect->speedY.fValue);				// 移動量(Y軸)
+	SetRandom(&effect->speedZ.initial, &effect->speedZ.fValue);				// 移動量(Z軸)
+	SetRandom(&effect->randLife.initial, &effect->randLife.nValue);			// 寿命
+	SetRandom(&effect->width.initial, &effect->width.fValue);				// 幅
+	SetRandom(&effect->height.initial, &effect->height.fValue);				// 高さ
+	SetRandom(&effect->shotAngleX.initial, &(effect->shotAngleX.fValue));	// 発射角度(X軸)
+	SetRandom(&effect->shotAngleY.initial, &(effect->shotAngleY.fValue));	// 発射角度(Y軸)
+	SetRandom(&effect->shotAngleZ.initial, &(effect->shotAngleZ.fValue));	// 発射角度(Z軸)
 }
 
 //********************************************************************************
-// SRandIntの乱数結果を反映
-// 引数１　乱数が設定出来る int型
-// 引数２　値
+// 頂点の設定
+// 引数１　乱数が設定出来る float型
 // 備考
-//	乱数が使用する場合は、引数２の値を乱数の値に変更する。
-//	乱数が使用しない場合は、何も値も変更しない。
+//	まとめただけ、もっとうまく纏めたい。
 //********************************************************************************
-void SetRandom(FRandInt* fluct, int* nValue)
+void SetVtx()
 {
-	if (fluct->bIsRandom)	// 乱数が使用されている
+	int allVtx = 0;			// 配列内の合計頂点数
+	int allIdx = 0;			// 配列内の合計インデックス数
+	int allPolygon = 0;		// 配列内の合計ポリゴン数
+	for (int i = 0; i < MAX_EFFECT; i++)
 	{
-		*nValue = (int)((rand() / (float)RAND_MAX) * (fluct->nMax - fluct->nMin)) + fluct->nMin;
+		Effect* pEffect = &(s_aEffect[i]);
+
+		if (!pEffect->bUse)
+		{
+			continue;
+		}
+
+		int nXLine = pEffect->nSurfaceWidth + 1;
+		int nZLine = pEffect->nSurfaceHeight + 1;
+
+		// 頂点数を計算
+		pEffect->nVtx = nXLine * nZLine;
+
+		// インデックス数を計算
+		pEffect->nIdx = ((nXLine * 2) * pEffect->nSurfaceHeight) + ((pEffect->nSurfaceHeight - 1) * 2);
+
+		// ポリゴン数を計算
+		pEffect->nPolygon = (pEffect->nSurfaceWidth * pEffect->nSurfaceHeight * 2) + ((pEffect->nSurfaceHeight - 1) * 4);
+
+		allVtx += pEffect->nVtx;			// 配列内の合計頂点数
+		allIdx += pEffect->nIdx;			// 配列内の合計インデックス数
+		allPolygon += pEffect->nPolygon;	// 配列内の合計ポリゴン数
 	}
+
+	// デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// デバイスの取得
+
+	// 頂点バッファの生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * (allVtx + 4),		// 確保するバッファサイズ +4はエフェクトが生じてないときにnullzeroを予防するため
+		D3DUSAGE_WRITEONLY,
+		FVF_VERTEX_3D,
+		D3DPOOL_MANAGED,
+		&s_pVtxBuff,
+		NULL);
+
+	// 頂点情報へのポインタを生成
+	VERTEX_3D *pVtx;
+
+	// 頂点バッファをロックし、頂点情報へのポインタを取得
+	s_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
+
+	// 頂点バッファーの設定
+	for (int i = 0; i < MAX_EFFECT; i++)
+	{
+		Effect* pEffect = &(s_aEffect[i]);
+
+		if (!pEffect->bUse)
+		{
+			continue;
+		}
+
+		// 頂点座標の設定
+		for (int Z = 0; Z <= pEffect->nSurfaceHeight; Z++)
+		{
+			for (int X = 0; X <= pEffect->nSurfaceWidth; X++)
+			{
+				pVtx->pos.x = (X - pEffect->nSurfaceWidth * 0.5f) * pEffect->width.fValue;
+				pVtx->pos.y = 0.0f;
+				pVtx->pos.z = (Z - pEffect->nSurfaceHeight * 0.5f) * -pEffect->height.fValue;
+				pVtx->nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+				pVtx->col = pEffect->col;
+				pVtx->tex = D3DXVECTOR2((float)X, (float)Z);
+				pVtx++;	// 頂点データのポインタを4つ分進める
+			}
+		}
+	}
+
+	// 頂点バッファをアンロック
+	s_pVtxBuff->Unlock();
+
+	// インデックスバッファの生成
+	pDevice->CreateIndexBuffer(
+		sizeof(VERTEX_3D) * (allIdx + 4),
+		D3DUSAGE_WRITEONLY,
+		D3DFMT_INDEX16,
+		D3DPOOL_MANAGED,
+		&s_pIdxBuff,
+		NULL);
+
+	WORD* pIdx;
+	// インデックスバッファをロック
+	s_pIdxBuff->Lock(0, 0, (void**)&pIdx, 0);
+
+	// 頂点バッファーの設定
+	for (int i = 0; i < MAX_EFFECT; i++)
+	{
+		Effect* pEffect = &(s_aEffect[i]);
+
+		// インデックスを求める
+		for (int Y = 0; Y < pEffect->nSurfaceHeight; Y++)
+		{
+			int nlineTop = Y * (LINEVTX(pEffect->nSurfaceWidth) * 2 + 2);	// 一列を生成するするときに必要なインデックスの数
+			// 一回のfor文で2個にインデックスを設定
+			for (int X = 0; X <= pEffect->nSurfaceWidth; X++)
+			{
+				int nIdxData = X * 2 + nlineTop;
+				pIdx[nIdxData + 1] = X + LINEVTX(pEffect->nSurfaceWidth) * Y;
+				pIdx[nIdxData] = pIdx[nIdxData + 1] + LINEVTX(pEffect->nSurfaceWidth);
+			}
+
+			// 縮退ポリゴンのインデックスを設定
+			if (Y < pEffect->nSurfaceHeight - 1)
+			{
+				pIdx[LINEVTX(pEffect->nSurfaceWidth) * 2 + nlineTop] = pEffect->nSurfaceWidth + LINEVTX(pEffect->nSurfaceWidth) * Y;
+
+				pIdx[LINEVTX(pEffect->nSurfaceWidth) * 2 + 1 + nlineTop] = LINEVTX(pEffect->nSurfaceWidth) * 2 + LINEVTX(pEffect->nSurfaceWidth) * Y;
+
+			}
+		}
+		pIdx += pEffect->nIdx;
+	}
+	// インデックスバッファをアンロック
+	s_pIdxBuff->Unlock();
 }

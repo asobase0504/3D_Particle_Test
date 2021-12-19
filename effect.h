@@ -78,11 +78,6 @@ typedef enum
 	ADD_MODE_SIN,				// SINカーブ
 	ADD_MODE_COS,				// COSカーブ
 	MAX_ADD_MODE				// パーティクルモードの最大数
-	/*
-	move += x;
-	move += sinf(y) * x;
-	move += cosf(y) * x;
-	*/
 }ADD_MODE;
 
 //------------------------------------
@@ -132,9 +127,10 @@ typedef struct
 typedef struct
 {
 	float fValue;		// 現在値
-	float fAddValue;	// 加算値
 	FRandFloat initial;	// 初期値
-	FRandFloat Add;		// 加算値
+	float fAddValue;	// 加算値
+	ADD_MODE addMode;	// モード
+	FRandFloat Add;		// 乱数で加算
 } SFluctFloat;
 
 //------------------------------------
@@ -143,9 +139,10 @@ typedef struct
 typedef struct
 {
 	int nValue;			// 現在値
-	float fAdd;			// 加算値
 	FRandInt initial;	// 初期値
-	FRandInt Add;		// 加算値
+	float fAdd;			// 加算値
+	ADD_MODE addMode;	// モード
+	FRandInt Add;		// 乱数で加算
 } SFluctInt;
 
 //------------------------------------
@@ -154,9 +151,10 @@ typedef struct
 typedef struct
 {
 	D3DXVECTOR3 value;	// 現在値
+	FRandFloat initial;	// 初期値
 	D3DXVECTOR3 fAdd;	// 加算値
-	FRandInt initial;	// 初期値
-	FRandInt Add;		// 加算値
+	ADD_MODE addMode;	// モード
+	FRandFloat Add;		// 乱数で加算
 } SFluctVector3;
 
 //------------------------------------
@@ -164,6 +162,15 @@ typedef struct
 //------------------------------------
 typedef struct
 {
+	// メッシュの作成
+	// ファイル読み込み
+	int nSurfaceHeight;		// 縦の面の数
+	int nSurfaceWidth;		// 横の面の数
+	// ファイル読み込みなし
+	int nVtx;				// 頂点数
+	int nIdx;				// インデックス数
+	int nPolygon;			// ポリゴン数
+
 	EFFECT_TEX tex;			// テクスチャ情報
 	SFluctInt randLife;		// 寿命
 
@@ -239,8 +246,5 @@ void UninitEffect(void);
 void UpdateEffect(void);
 void DrawEffect(void);
 void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type);
-
-void SetRandom(FRandFloat* fluct, float* fValue);	// float型の乱数適用
-void SetRandom(FRandInt* fluct, int* nValue);		// int型の乱数適用
 
 #endif

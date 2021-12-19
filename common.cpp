@@ -1,6 +1,7 @@
 //=========================================
 // 
-// 処理の設定
+// 共通処理の設定
+// プロジェクト全体で使用する処理
 // Author YudaKaito
 // 
 //=========================================
@@ -23,6 +24,23 @@ void NormalizeRot(float* rot)
 	{
 		*rot += D3DX_PI * 2;
 	}
+}
+
+//=========================================
+// テクスチャアニメーション処理
+//=========================================
+void TexAnim(VERTEX_3D *vtx,int U, int V, int Pattern)
+{
+
+	float fLeft = 1.0f / U * (Pattern % U);
+	float fRight = 1.0f / U *(Pattern % U) + 1.0f / U;
+	float fUp = 1.0f / V * (Pattern / U);
+	float fDown = 1.0f / V * (Pattern / U + 1.0f / V * V);
+
+	vtx[0].tex = D3DXVECTOR2(fLeft, fUp);
+	vtx[1].tex = D3DXVECTOR2(fRight, fUp);
+	vtx[2].tex = D3DXVECTOR2(fLeft, fDown);
+	vtx[3].tex = D3DXVECTOR2(fRight, fDown);
 }
 
 //=========================================
@@ -58,5 +76,3 @@ void DiagonalLine(float* Length, float* Angele, float width, float height)
 	// 対角線の角度を算出
 	*Angele = atan2f(width, height);
 }
-
-

@@ -17,7 +17,13 @@ void AddSynthesis(LPDIRECT3DDEVICE9 pDevice);	// 加算合成描写
 // 計算系統の処理
 void DiagonalLine(float* Length, float* Angele, float width, float height);			// 対角線の計算
 void VtxCol(VERTEX_3D *pVtx,D3DXCOLOR col);			// 頂点カラーの設定
-void NormalizeRot(float* rot);
+void NormalizeRot(float* rot);						// 角度の正規化
+void TexAnim(VERTEX_3D *vtx, int U,int V,int Pattern);				// テクスチャアニメーションの処理。
+
+// 頂点バッファーの処理
+void RectVtxPos_XY(VERTEX_3D *pVtx, D3DXVECTOR3 rot,float angele,float length);		// X軸とY軸でメッシュの作成
+void RectVtxPos_XZ(VERTEX_3D *pVtx, D3DXVECTOR3 rot,float angele,float length);		// X軸とZ軸でメッシュの作成
+void RectVtxPos_YZ(VERTEX_3D *pVtx, D3DXVECTOR3 rot,float angele,float length);		// Y軸とZ軸でメッシュの作成
 
 // カメラ系統の処理
 

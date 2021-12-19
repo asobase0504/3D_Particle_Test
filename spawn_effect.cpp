@@ -13,6 +13,7 @@
 #include "SaveEffect.h"
 #include "adjusteffect.h"
 #include "LoadEffect.h"
+#include "common_effect.h"
 #include "input.h"
 #include "effect.h"
 #include <time.h>

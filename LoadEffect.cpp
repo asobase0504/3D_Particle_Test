@@ -73,12 +73,30 @@ Effect LoadEffect(EFFECT_TYPE type)
 			fscanf(pFile, "%d", &effect.tex);	// 値を入れる
 
 		}
+		else if (strcmp(&read[0], "Surface") == 0)
+		{
+			while (1)
+			{
+				fscanf(pFile, "%s", &read);
+				if (strcmp(&read[0], "Value") == 0)
+				{
+					effect.bIsPosRand = true;
+					fscanf(pFile, "%s", &read);					// = の除去
+					fscanf(pFile, "%d", &effect.nSurfaceWidth);		// 値を入れる
+					fscanf(pFile, "%d", &effect.nSurfaceHeight);	// 値を入れる
+				}
+				else if (strcmp(&read[0], "end") == 0)			// 属性付与終了
+				{
+					break;
+				}
+			}
+		}
 		else if (strcmp(&read[0], "posLag") == 0)
 		{
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					effect.bIsPosRand = true;
 					fscanf(pFile, "%s", &read);					// = の除去
@@ -97,7 +115,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.colR.fValue);	// 値を入れる
@@ -127,7 +145,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.colB.fValue);
@@ -157,7 +175,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.colG.fValue);
@@ -187,7 +205,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.colA.fValue);
@@ -217,7 +235,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.width.fValue);
@@ -247,7 +265,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.height.fValue);
@@ -277,7 +295,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%d", &effect.randLife.nValue);
@@ -307,7 +325,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.speedX.fValue);
@@ -337,7 +355,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.speedY.fValue);
@@ -367,7 +385,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.speedZ.fValue);
@@ -397,7 +415,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.shotAngleX.fValue);
@@ -427,7 +445,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.shotAngleY.fValue);
@@ -457,7 +475,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.shotAngleZ.fValue);
@@ -487,7 +505,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 			while (1)
 			{
 				fscanf(pFile, "%s", &read);
-				if (strcmp(&read[0], "nValue") == 0)
+				if (strcmp(&read[0], "Value") == 0)
 				{
 					fscanf(pFile, "%s", &read);					// = の除去
 					fscanf(pFile, "%f", &effect.fGravity);
@@ -509,7 +527,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 		else if (strcmp(&read[0], "DivisionU") == 0)
 		{
 			fscanf(pFile, "%s", &read);
-			if (strcmp(&read[0], "nValue") == 0)
+			if (strcmp(&read[0], "Value") == 0)
 			{
 				fscanf(pFile, "%s", &read);					// = の除去
 				fscanf(pFile, "%d", &effect.nDivisionU);
@@ -522,7 +540,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 		else if (strcmp(&read[0], "DivisionV") == 0)
 		{
 			fscanf(pFile, "%s", &read);
-			if (strcmp(&read[0], "nValue") == 0)
+			if (strcmp(&read[0], "Value") == 0)
 			{
 				fscanf(pFile, "%s", &read);					// = の除去
 				fscanf(pFile, "%d", &effect.nDivisionV);
