@@ -155,8 +155,9 @@ typedef struct
 {
 	D3DXVECTOR3 value;	// 現在値
 	D3DXVECTOR3 fAdd;	// 加算値
-	FRandInt initial;	// 初期値
-	FRandInt Add;		// 加算値
+	FRandFloat x;		// x
+	FRandFloat y;		// y
+	FRandFloat z;		// z
 } SFluctVector3;
 
 //------------------------------------
