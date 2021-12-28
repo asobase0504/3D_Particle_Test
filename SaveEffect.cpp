@@ -17,8 +17,6 @@ void SaveEffect(Effect effect)
 	FILE * pFile;
 
 	// ì‚Á‚Ä‚È‚¢ó‘Ô‚É•ÏX
-	effect.nDivisionU = 1;
-	effect.nDivisionV = 1;
 	effect.bUse = false;
 	effect.nCntAnim = 0;
 
