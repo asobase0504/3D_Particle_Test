@@ -9,6 +9,6 @@ data/TEXTURE/effect103.jpg
 
 FILE = 3
 
-Particle4.bin
-"data/FILE/Particle2.txt"
-Particle4.bin
+"data/FILE/Particle4.bin"
+"data/FILE/Particle4.bin"
+"data/FILE/Particle4.bin"

@@ -29,8 +29,8 @@
 //-----------------------
 static const char* pFilename[] =
 {
-	"data/FILE/TestParticle.txt",
-	"data/FILE/Particle2.txt",
+	"data/FILE/Particle4.bin",
+	"data/FILE/Particle4.bin",
 	"data/FILE/Particle4.bin",
 };
 // PFile と TYPEEFFECT の数をチェック
@@ -59,7 +59,7 @@ Effect LoadEffect(EFFECT_TYPE type)
 	// ファイルを開く
 	pFile = fopen(pFilename[type], "rb");
 
-	fread(&effect, sizeof(Effect),sizeof(effect),pFile);
+	fread(&effect, sizeof(Effect),1,pFile);
 
 	fclose(pFile);
 	return effect;

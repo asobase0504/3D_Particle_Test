@@ -26,7 +26,7 @@ void SaveEffect(Effect effect)
 	if (pFile != NULL)
 	{// ファイルが開いた場合
 		// ファイルの書き込み
-		fwrite(&effect, sizeof(Effect), sizeof(effect), pFile);
+		fwrite(&effect, sizeof(Effect), 1, pFile);
 		//ファイルを閉じる
 		fclose(pFile);
 	}
