@@ -74,6 +74,7 @@ typedef struct
 	D3DXVECTOR3		move;			// ˆÚ“®‹——£
 	float			fSpeed;			// ˆÚ“®‘¬“x
 	bool			bUse;			// Žg—p‚µ‚Ä‚¢‚é‚©
+	int				nCountParticle;
 }SpawnPoint;
 
 ////************************************************************

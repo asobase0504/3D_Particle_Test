@@ -1,0 +1,14 @@
+TEXTURE = 6
+
+NULL
+data/TEXTURE/effect000.jpg
+data/TEXTURE/effect100.jpg
+data/TEXTURE/effect101.jpg
+data/TEXTURE/effect102.jpg
+data/TEXTURE/effect103.jpg
+
+FILE = 3
+
+"data/FILE/Particle4.bin"
+"data/FILE/Particle4.bin"
+"data/FILE/Particle4.bin"

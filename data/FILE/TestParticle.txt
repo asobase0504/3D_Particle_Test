@@ -1,4 +1,4 @@
-TEXTURE = 4
+TEXTURE = 0
 
 posLag
 nValue = 0.000000 0.000000 0.000000

@@ -62,11 +62,11 @@ nValue = 0.000000
 end
 
 DivisionU
-nValue = 0
+nValue = 1
 end
 
 DivisionV
-nValue = 0
+nValue = 1
 end
 
 Billboard

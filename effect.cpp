@@ -50,21 +50,13 @@ void OffScreenEffect(Effect* effect);		// 画面外処理
 static LPDIRECT3DTEXTURE9 s_pTexture[MAX_EFFECT_TYPE_TEX] = {};		// テクスチャへのポインタ
 static LPDIRECT3DVERTEXBUFFER9 s_pVtxBuff = {};						// 頂点バッファへのポインタ
 static Effect s_aEffect[MAX_EFFECT];								// エフェクトの情報
+static Effect s_aTypeEffect[MAX_TYPE_EFFECT];						// ファイルを読み込んだエフェクト
 
 //-----------------------
 // テクスチャ名
 //-----------------------
-static const char* pTexturename[] =
-{
-	NULL,	// テクスチャなし
-	"data/TEXTURE/effect000.jpg",	// 丸
-	"data/TEXTURE/effect100.jpg",	// 線の丸
-	"data/TEXTURE/effect101.jpg",	// 二重丸
-	"data/TEXTURE/effect102.jpg",	// 細い四角
-	"data/TEXTURE/effect103.jpg",	// 三角
-};
-// pTexture と EFFECT_TYPE_TEX の数をチェック
-static_assert((sizeof(pTexturename) / sizeof(pTexturename[0])) == MAX_EFFECT_TYPE_TEX, "error テクスチャの数と列挙型の数が一致してません");
+static char pTexturename[64][1024] = {};
+static Effect pTypeEffect[64] = {};
 
 //********************************************************************************
 // エフェクトの初期化処理
@@ -78,13 +70,41 @@ void InitEffect(void)
 
 	// デバイスへのポインタ
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();	// デバイスの取得
+	
+	FILE* pFile;
 
-	// ポリゴンに張り付けるテクスチャの読み込み
-	for (int i = 0; i < MAX_EFFECT_TYPE_TEX; i++)
+	char read[255] = {};
+	int nCnt;
+
+	// ファイルを開く
+	pFile = fopen("data/FILE/Load.txt", "r");
+
+	// テクスチャの読み込み
+	fscanf(pFile, "%s", &read);
+	if (strcmp(&read[0], "TEXTURE") == 0)
 	{
-		D3DXCreateTextureFromFile(pDevice
-			,pTexturename[i]
-			,&s_pTexture[i]);
+		fscanf(pFile, "%s", &read);
+		fscanf(pFile, "%d", &nCnt);
+
+		for (int i = 0; i < nCnt; i++)
+		{
+			fscanf(pFile, "%s", pTexturename[i]);
+			D3DXCreateTextureFromFile(pDevice
+				, &pTexturename[i][0]
+				, &s_pTexture[i]);
+		}
+	}
+
+	// ファイルの読み込み
+	fscanf(pFile, "%s", &read);
+	if (strcmp(&read[0], "FILE") == 0)
+	{
+		fscanf(pFile, "%s", &read);
+		fscanf(pFile, "%d", &nCnt);
+		for (int i = 0; i < nCnt; i++)
+		{
+			pTypeEffect[i]  = LoadEffect((EFFECT_TYPE)i);
+		}
 	}
 
 	// エフェクトの情報を初期化
@@ -201,7 +221,7 @@ void UpdateEffect(void)
 		{
 			continue;
 		}
-
+		
 		StatChange(pEffect);	// 各種パラメータの設定
 
 		MoveEffect(pEffect);	// 移動の更新
@@ -214,8 +234,10 @@ void UpdateEffect(void)
 		DiagonalLine(&pEffect->fLength, &pEffect->fAngele, pEffect->width.fValue, pEffect->height.fValue);
 
 		// 死亡条件の確認後、死亡処理
-		DiedCriteriaEffect(pEffect) ? true : DiedEffect(pEffect);
-
+		if(!(DiedCriteriaEffect(pEffect)))
+		{
+			DiedEffect(pEffect);
+		}
 		// window画面以外に出た場合の処理
 		OffScreenEffect(pEffect);
 
@@ -479,7 +501,7 @@ void DrawEffect(void)
 		{
 		case BLENDMODE_ADDITION:
 			// αブレンディングを加算合成に設定
-			AddSynthesis(pDevice);
+			pDevice = AddAlphaBlend(pDevice);
 			break;
 		case BLENDMODE_SUBTRACT:
 			// αブレンディングを減算合成に設定
@@ -512,10 +534,9 @@ void DrawEffect(void)
 		pDevice->SetTexture(0, NULL);
 
 	}
+
 	// αブレンディングを元に戻す
-	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	pDevice = NoneAlphaBlend(pDevice);
 }
 
 //********************************************************************************
@@ -543,7 +564,7 @@ void SetEffect(D3DXVECTOR3 pos,EFFECT_TYPE type)
 
 #ifndef TEST_MODE	// テスト環境か否か
 		// ファイルの読み込み
-		s_aEffect[i] = LoadEffect(type);
+		s_aEffect[i] = pTypeEffect[type];
 #else	// エフェクトテスト時のみ有効
 		*pEffect = *GetParticle();
 #endif																	
