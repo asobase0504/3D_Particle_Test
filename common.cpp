@@ -38,14 +38,28 @@ void RectDraw(LPDIRECT3DDEVICE9 pDevice, LPDIRECT3DTEXTURE9 Texture, int nCnt)
 }
 
 //=========================================
-// 加算合成有りの描写(長方形)
+// aブレンドの通常設定
 //=========================================
-void AddSynthesis(LPDIRECT3DDEVICE9 pDevice)
+LPDIRECT3DDEVICE9 NoneAlphaBlend(LPDIRECT3DDEVICE9 pDevice)
+{
+	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	return pDevice;
+}
+
+//=========================================
+// aブレンドの加算合成
+//=========================================
+LPDIRECT3DDEVICE9 AddAlphaBlend(LPDIRECT3DDEVICE9 pDevice)
 {
 	// aブレンディングを加算合成に設定
 	pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+
+	return pDevice;
 }
 
 //=========================================
