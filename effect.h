@@ -78,11 +78,6 @@ typedef enum
 	ADD_MODE_SIN,				// SINカーブ
 	ADD_MODE_COS,				// COSカーブ
 	MAX_ADD_MODE				// パーティクルモードの最大数
-	/*
-	move += x;
-	move += sinf(y) * x;
-	move += cosf(y) * x;
-	*/
 }ADD_MODE;
 
 //------------------------------------

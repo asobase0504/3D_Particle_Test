@@ -94,6 +94,7 @@ void InitEffect(void)
 				, &s_pTexture[i]);
 		}
 	}
+
 	// ファイルの読み込み
 	fscanf(pFile, "%s", &read);
 	if (strcmp(&read[0], "FILE") == 0)
@@ -220,7 +221,7 @@ void UpdateEffect(void)
 		{
 			continue;
 		}
-
+		
 		StatChange(pEffect);	// 各種パラメータの設定
 
 		MoveEffect(pEffect);	// 移動の更新
