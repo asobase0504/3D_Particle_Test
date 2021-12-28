@@ -1,4 +1,4 @@
-TEXTURE = 1
+TEXTURE = 5
 
 posLag
 nValue = 0.000000 0.000000 0.000000
@@ -62,11 +62,11 @@ nValue = 0.000000
 end
 
 DivisionU
-nValue = 0
+nValue = 1
 end
 
 DivisionV
-nValue = 0
+nValue = 1
 end
 
 Billboard

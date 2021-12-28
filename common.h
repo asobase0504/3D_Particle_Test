@@ -12,7 +12,8 @@
 //------------------------------------
 // •`‰æŒn“‚Ìˆ—
 void RectDraw(LPDIRECT3DDEVICE9 pDevice, LPDIRECT3DTEXTURE9 Texture, int nCnt);		// ’Êí‚Ì•`Ê
-void AddSynthesis(LPDIRECT3DDEVICE9 pDevice);	// ‰ÁZ‡¬•`Ê
+LPDIRECT3DDEVICE9 NoneAlphaBlend(LPDIRECT3DDEVICE9 pDevice);	// ’Êí‡¬•`Ê
+LPDIRECT3DDEVICE9 AddAlphaBlend(LPDIRECT3DDEVICE9 pDevice);		// ‰ÁZ‡¬•`Ê
 
 // ŒvZŒn“‚Ìˆ—
 void DiagonalLine(float* Length, float* Angele, float width, float height);			// ‘ÎŠpü‚ÌŒvZ

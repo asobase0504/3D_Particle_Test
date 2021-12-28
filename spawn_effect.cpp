@@ -214,7 +214,7 @@ void UpdateSpawnEffect(void)
 	// データの保存
 	if (GetKeyboardTrigger(DIK_F3))
 	{// [F3]キーが押されたとき
-		SaveEffect(&(g_aParticle[s_nPointCnt]));
+		SaveEffect(g_aParticle[s_nPointCnt]);
 	}
 #endif // !TEAT_MODE
 }

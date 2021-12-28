@@ -78,11 +78,6 @@ typedef enum
 	ADD_MODE_SIN,				// SINカーブ
 	ADD_MODE_COS,				// COSカーブ
 	MAX_ADD_MODE				// パーティクルモードの最大数
-	/*
-	move += x;
-	move += sinf(y) * x;
-	move += cosf(y) * x;
-	*/
 }ADD_MODE;
 
 //------------------------------------
@@ -159,6 +154,18 @@ typedef struct
 	FRandFloat y;		// y
 	FRandFloat z;		// z
 } SFluctVector3;
+
+//------------------------------------
+// テクスチャ関係の構造体
+//------------------------------------
+typedef struct
+{
+	int nCnt;			// カウンター
+	int nPattern;		// 何個目か
+	int nDivisionU;		// 分割数(U)
+	int nDivisionV;		// 分割数(V)
+	int nDivisionMAX;	// 総分割数
+}TexAnim;
 
 //------------------------------------
 // パーティクル構造体
