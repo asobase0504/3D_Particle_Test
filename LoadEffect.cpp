@@ -41,7 +41,6 @@ static_assert((sizeof(pFilename) / sizeof(pFilename[0])) == MAX_TYPE_EFFECT, "er
 //********************************************************************************
 Effect LoadTex(EFFECT_TEX type)
 {
-
 	return Effect();
 }
 
